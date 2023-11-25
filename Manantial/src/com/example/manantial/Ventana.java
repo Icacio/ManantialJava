@@ -7,7 +7,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 public class Ventana extends Frame implements ActionListener, WindowListener {
-	private final SearchBox barra = new SearchBox(45);
+	private final SearchBox barra;
 	private final Spinner spinner = new Spinner();
 	private final Button botonInventario = new Button("Inventario");
 	private final Inventario inventario = Inventario.inventario;
@@ -18,12 +18,14 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	boolean flag = false;
 	private boolean caja;
 	
-	private Ventana(boolean caja) {
+	Ventana(boolean caja) {
 		super(caja?"Caja":"Inventario");
 		this.caja = caja;
+		barra = new SearchBox(45,this);
 		drawing = caja?new Inventario():inventario;
 		generalSettings();
 		pack();
+		setVisible(true);
 	}
 	private void changeRoom(boolean caja) {
 		if (caja!=this.caja)
@@ -151,16 +153,6 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
         barra.setText("");
 	}
 
-	/*private void guiSettings(Inventario drawing) {
-		/*center.removeAll();
-		for (int i = 0; i < inventario.length();i++) {
-			codigo.add(drawing.getLabel(0,i));
-			nombre.add(drawing.getLabel(1,i));
-			right.add(drawing.getLabel(2,i));
-			right.add(drawing.getLabel(3,i));
-		}
-	}//*/
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		agregar(barra.getText());
@@ -171,11 +163,6 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	public void windowClosing(WindowEvent e) {
 		inventario.save();
 		dispose();
-	}
-	public static Window singleton() {
-		if (Inventario.singleton==null)
-			return new Ventana(true);
-		return Inventario.singleton;
 	}
 	public static Ventana singleton(boolean caja) {
 		if (Inventario.singleton == null)

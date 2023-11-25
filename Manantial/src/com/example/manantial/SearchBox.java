@@ -12,9 +12,9 @@ public class SearchBox extends TextField /*implements MouseListener */{
    private final Window window;
    private Label currentComponent;
 
-   SearchBox (int i) {
+   SearchBox (int i,Ventana owner) {
 	   super(null,i);
-	   window = Ventana.singleton();
+	   window = new Window(owner);
    }
    
    private void hideTip() {

@@ -141,7 +141,7 @@ class Inventario extends Canvas {
 	        		if (Utils.isNumber(grid[3][i]));
 	        			cantidad[i] = Integer.parseInt(grid[3][i]);
 	        	}
-	        	Ventana.singleton(true).setVisible(true);
+	        	ventana = new Ventana(true);
 	        } else
 	        	requestPassword();
 		} catch (IOException e1) {
@@ -277,7 +277,7 @@ class Inventario extends Canvas {
 						password = null;
 						confirmPassword = null;
 						instruccion = null;
-						Ventana.singleton(false).setVisible(true);
+						ventana = new Ventana(false);
 					}
 				} else  {
 					instruccion.setText("Contraseña no coincide");
