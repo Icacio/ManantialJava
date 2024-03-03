@@ -1,111 +1,171 @@
 package com.example.manantial;
 
-import java.awt.Label;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.lang.String;
+import java.util.Hashtable;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.List;
+import java.awt.Panel;
 import java.awt.TextField;
 import java.awt.Window;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
 
-public class SearchBox extends TextField /*implements MouseListener */{
+public class SearchBox extends TextField implements MouseMotionListener, KeyListener,
+	TextListener, FocusListener, ComponentListener, ItemListener {
 
-   private final Window window;
-   private Label currentComponent;
+   private Window window;
+   private Hashtable<String,String> table;
+   private List[] results = new List[3];
 
-   SearchBox (int i,Ventana owner) {
+   SearchBox (int i) {
 	   super(null,i);
-	   window = new Window(owner);
-   }
-   
-   private void hideTip() {
-	   if (window != null) {
-           window.setVisible(false);
-       }
+	   addTextListener(this);
+	   addFocusListener(this);
+	   addComponentListener(this);
+	   addKeyListener(this);
    }
 
- 
-    /**
-     * Determines which Component the mouse cursor is over and
-     * starts a thread to wait the appropriate amount of time
-     * before displaying its tooltip.
-     
-   public void mouseEntered(MouseEvent e) {
-       currentComponent = (Component) e.getSource();
-   }*/
-   
-   public void mousePressed(MouseEvent e) {
-	   if (e.getButton()==MouseEvent.BUTTON1)
-       if (e.getSource() == currentComponent) {
-           hideTip();
-       }
-   }
-    /**
-     * Implementation of the timer thread.
-     * This waits the appropriate amount of time and then displays the tooltip.
-     */
-   public void a() {
-	   // Place the tooltip directly below its Component.
-	   Rectangle bounds = currentComponent.getBounds();
-	   Point location = currentComponent.getLocationOnScreen();
-	   window.setLocation(location.x, location.y + bounds.height);
-	   window.setVisible(true);
-   }
-
-	
-	
-	/*private void draw () {
-		if (is_string(texto)&&string_digits(texto)!=texto) {
-		    var elex = 0;
-		    for (var i = 1; i < ds_grid_height(grid_inven);i++)
-		        if string_count(texto,ds_grid_get(grid_inven,1,i)) {
-		            var a = draw_get_colour();
-		            if (selected == ++elex) {
-		                if keyboard_check_released(vk_enter) {
-		                    focus(spinner)
-		                    if (room==administrador) {
-		                        if match() {
-		                            bTexto(grid_inven[#1,i])
-		                            spinner.amount = grid_inven[#2,i]
-		                        }
-		                        else {
-		                            bTexto(grid_inven[#0,i]);
-		                            spinner.amount = grid_inven[#3,i]
-		                        }
-		                    } else bTexto(grid_inven[#0,i]);
-		                    break;
-		                }
-		                draw_set_colour(c_white)
-		            } else if (floor(selected) == elex) {
-		                if mouse_check_button_released(mb_left) {
-		                    if (room==administrador) {
-		                        if match() {
-		                            bTexto(grid_inven[#1,i])
-		                            spinner.amount = grid_inven[#2,i]
-		                        }
-		                        else {
-		                            bTexto(grid_inven[#0,i]);
-		                            spinner.amount = grid_inven[#3,i]
-		                        }
-		                    } else bTexto(grid_inven[#0,i]);
-		                    break;
-		                }
-		                draw_set_colour(c_white)
-		            }
-		            var b = draw_get_colour()
-		            if b == c_white draw_set_colour(10132122)
-		            else draw_set_colour(c_ltgray)
-		            draw_rectangle(x-170,y-elex*32-16,x+230,y-elex*32+16,false)
-		            draw_set_colour(b);
-		            draw_text(x,y-elex*32,grid_inven[#1,i])
-		            draw_rectangle(x-170,y-elex*32-16,x+130,y-elex*32+16,true)
-		            draw_text(x+155,y-elex*32,"$"+string(grid_inven[#2,i]))
-		            draw_rectangle(x+130,y-elex*32-16,x+180,y-elex*32+16,true)
-		            draw_text(x+205,y-elex*32,"\#"+string(grid_inven[#3,i]))
-		            draw_rectangle(x+180,y-elex*32-16,x+230,y-elex*32+16,true)
-		            if draw_get_colour()==c_white//
-		            draw_set_colour(a)
+	@Override
+	public void textValueChanged(TextEvent e) {
+		window().removeAll();
+		String[][] coincidence = {{},{},{}};
+		int coincidences = 0;
+		Inventario inventario = Inventario.inventario;
+		if (!getText().equals("")&&!Utils.isNumber(getText())) {
+		    int length = inventario.length();
+		    for (int i = 0; i < length;i++) {
+		    	String a = inventario.getString(1,i);
+		        if (a.contains(getText())) {
+		        	coincidence[0] = Utils.arrayResize(coincidence[0]);
+		        	coincidence[0][coincidences] = inventario.getString(1,i);
+		        	table.put(inventario.getString(1,i),inventario.getString(0,i));
+		        	coincidence[1] = Utils.arrayResize(coincidence[1]);
+		        	coincidence[1][coincidences] = inventario.getString(2,i);
+		        	coincidence[2] = Utils.arrayResize(coincidence[2]);
+		        	coincidence[2][coincidences++] = inventario.getString(3,i);
 		        }
-		    if (selected==floor(selected)&&selected > elex) selected = elex;
+		    }
+		    if (coincidences < 1) {
+		    	window().setVisible(false);
+		    } else {
+		    	for (int i= 0; i < 3;i++) {
+		    		results[i] = new List(coincidences);
+		    		List list = results[i];
+		    		list.addItemListener(this);
+		    		list.addMouseMotionListener(this);
+		    	}
+		    	window.add(results[0]);
+		    	Panel right = new Panel(new GridLayout(0,2));
+		    	window.add(right,BorderLayout.EAST);
+		    	right.add(results[1]);
+		    	right.add(results[2]);
+		    	for(int i = 0; i < coincidences; i++) {
+		    		for (int j = 0; j < 3; j++) {
+		    			results[j].add(coincidence[j][i]);
+		    		}
+		    	}
+		    	window().pack();
+		    	if (!window.isVisible()) {
+		    		window.setVisible(true);
+		    	}
+		    }
+		} else {
+			window().setVisible(false);
+		}           
+	}
+
+	public void actionPerformed(List list) {
+		int selected;
+		int [] non = {-1,-1};
+		if (list==results[0]) {
+			selected = results[0].getSelectedIndex();
+			non[0] = 1;
+			non[1] = 2;
+		} else if (list == results[1]) {
+			selected = results[1].getSelectedIndex();
+			non[0] = 0;
+			non[1] = 2;
+		} else if (list == results[2]) {
+			selected = results[2].getSelectedIndex();
+			non[0] = 1;
+			non[1] = 0;
+		} else return;
+		results[non[0]].select(selected);
+		results[non[1]].select(selected);
+	}
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		List list = (List)e.getSource();
+		list.select((e.getY()+2)*(list.getRows()+1)/list.getHeight());
+		actionPerformed(list);
+	}
+	
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		actionPerformed((List)e.getSource());
+		setText(table.get(results[0].getSelectedItem()));
+	}
+	
+	private Window window() {
+		if (window==null) {
+			window = new Window(Utils.getWindow(this));
+			window.setFocusableWindowState(false);
+			window.setLayout(new BorderLayout());
 		}
-	}*/
+		
+		return window;
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		window.dispose();
+		window = null;
+		results = new List[3];
+		table = null;
+	}
+	
+	@Override
+	public void focusGained(FocusEvent e) {
+		java.awt.Point location = getLocationOnScreen();
+		window().setLocation(location.x, location.y + getBounds().height);
+		table = new Hashtable<String, String>();
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		java.awt.Point location = getLocationOnScreen();
+		window().setLocation(location.x, location.y + getBounds().height);
+	}
+
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		int index;
+		if (e.getKeyCode()==KeyEvent.VK_DOWN) {
+			index = results[0].getSelectedIndex()+1;
+		} else if(e.getKeyCode()==KeyEvent.VK_UP) {
+			index = results[0].getSelectedIndex()-1;
+		} else return;
+		results[0].select(index);
+		results[1].select(index);
+		results[2].select(index);
+	}
+	
+	public void componentResized(ComponentEvent e) {}
+	public void componentShown(ComponentEvent e) {}
+	public void componentHidden(ComponentEvent e) {}
+	public void mouseDragged(MouseEvent e) {}
+	public void keyTyped(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {}
 }

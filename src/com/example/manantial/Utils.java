@@ -1,6 +1,10 @@
 package com.example.manantial;
 
 import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Component;
@@ -14,7 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 
-public class Utils extends WindowAdapter implements ActionListener {
+public final class Utils extends WindowAdapter implements ActionListener {
 	static final Utils singleton = new Utils();
 	
 	private Utils() {}
@@ -33,20 +37,20 @@ public class Utils extends WindowAdapter implements ActionListener {
 		Dialog error = new Dialog(source);
 		error.setLayout(new BorderLayout());
 		Utils.makeCloseable(error);
-		error.add(new Panel(),"East");
-		error.add(new Panel(),"West");
-		error.add(new Panel(),"North");
-		error.add(new Panel(),"South");
+		error.add(new Panel(),BorderLayout.EAST);
+		error.add(new Panel(),BorderLayout.WEST);
+		error.add(new Panel(),BorderLayout.NORTH);
+		error.add(new Panel(),BorderLayout.SOUTH);
 		Panel center = new Panel(new BorderLayout());
 		error.add(center);
-		center.add(new Label(a),"North");
+		center.add(new Label(a),BorderLayout.NORTH);
 		Panel south = new Panel();
 		Button button = new Button("Aceptar");
 		south.add(new Panel());
 		south.add(button);
 		south.add(new Panel());
 		button.addActionListener(b);
-		center.add(south,"South");
+		center.add(south,BorderLayout.SOUTH);
 		error.pack();
 		error.setVisible(true);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -71,7 +75,7 @@ public class Utils extends WindowAdapter implements ActionListener {
 	}
 	
 	public static String[] arrayResize(String[] array) {
-		try { 
+		try {
 			String[] tempArray = new String[array.length+1];
 			System.arraycopy(array,0,tempArray,0,array.length);
 			return tempArray;
@@ -93,13 +97,28 @@ public class Utils extends WindowAdapter implements ActionListener {
 		getWindow((Component)e.getSource()).dispose();
 	}
 
-	private static Window getWindow(ActionEvent e) {
+	public static Window getWindow(ActionEvent e) {
 		return getWindow(((Component)e.getSource()).getParent());
 	}
 	public static Window getWindow(Component c) {
-		if (c==null) return Inventario.inventario.ventana;
+		if (c==null) return Inventario.ventana;
 		if (c.getParent() instanceof Window)
 			return (Window) c.getParent();
 		return getWindow(c.getParent());
 	}//*/
+	
+	public static BufferedWriter file(String string) throws UnsupportedEncodingException, FileNotFoundException {
+		string = Inventario.working_dir+string;
+		int i;
+		for (i = string.length()-1; i > -1; i--) {
+			if (string.charAt(i)=='\\') break;
+		}
+		new File(string.substring(0,i)).mkdirs();
+		BufferedWriter a = 
+		new BufferedWriter(
+				new java.io.OutputStreamWriter(new java.io.FileOutputStream(string),"Cp1252"));
+		return a;
+
+		
+	}
 }

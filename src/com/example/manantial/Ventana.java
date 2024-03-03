@@ -10,88 +10,154 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	private final SearchBox barra;
 	private final Spinner spinner = new Spinner();
 	private final Button botonInventario = new Button("Inventario");
+	private final Label instrucciones = new Label(mensaje[0]);
+	private final Button pagar = new Button("Pagar: $0    ");
+	private final ScrollPane center = new ScrollPane();
 	private final Inventario inventario = Inventario.inventario;
-	private final Label instrucciones = new Label("Ingresa el código de barras y la cantidad a añadir.");
-	final Button pagar = new Button("Pagar: $0    ");
-	ScrollPane center = new ScrollPane();
-	Inventario drawing;
+	private static String mensaje[] = {"Ingresa el código de barras y la cantidad a añadir.",
+			"Ingresa el nombre de artículo y el precio."};
+	private Inventario drawing;
 	boolean flag = false;
 	private boolean caja;
 	
 	Ventana(boolean caja) {
 		super(caja?"Caja":"Inventario");
 		this.caja = caja;
-		barra = new SearchBox(45,this);
-		drawing = caja?new Inventario():inventario;
+		barra = new SearchBox(45);
+		drawing = caja?Inventario.venta():inventario;
 		generalSettings();
 		pack();
 		setVisible(true);
-	}
-	private void changeRoom(boolean caja) {
-		if (caja!=this.caja)
-			changeRoom();
 	}
 	
 	private void changeRoom() {
 		center.removeAll();
 		caja = !caja;
 		if (caja) {
-			Utils.makeCloseable(this);
+			if (flag) {
+				inventario.removeLine();
+				flag = false;
+			}
+			inventario.save();
 			setTitle("Caja");
-			drawing.save();
 			botonInventario.setLabel("Inventario");
-			drawing = new Inventario();
+			drawing = Inventario.venta();
 			pagar.setVisible(true);
 		} else {
-			addWindowListener(this);
+			drawing.save();
 			setTitle("Inventario");
 			botonInventario.setLabel("Volver");
 			drawing = Inventario.inventario;
 			pagar.setVisible(false);
 		}
+		drawing.setPreferredSize(new Dimension(drawing.getPreferredSize().width,(2+drawing.length())*getFont().getSize()));
 		center.add(drawing);
-		revalidate();
+		pack();
+		barra.requestFocusInWindow();
 	}
 	
 	private void generalSettings() {
-		Utils.makeCloseable(this);
+		addWindowListener(this);
 		Panel butonera = new Panel();
 		Button botonAgregar = new Button("Agregar");
 		botonAgregar.addActionListener((this));
 		butonera.add(instrucciones);
 		butonera.add(barra);
+		addComponentListener(barra);
 		barra.addActionListener(this);
-		
 		butonera.add(spinner);
 		spinner.addActionListener(this);
 		butonera.add(botonAgregar);
 		butonera.add(botonInventario);
 		butonera.add(pagar);
-		botonInventario.addActionListener((ActionEvent e) -> changeRoom());
+		pagar.addActionListener((e)->pagar());
+		botonInventario.addActionListener((e) -> reviewPassword());
 		if (!caja) {
+			pagar.setVisible(false);
 			botonInventario.setLabel("Volver");
 			if (inventario.length()==0)
 				botonInventario.setVisible(false);
 		}
-		add(new Panel(),"East");
-		add(new Panel(),"West");
-		add(new Panel(),"South");
-		add(butonera,"North");
+		add(new Panel(),BorderLayout.EAST);
+		add(new Panel(),BorderLayout.WEST);
+		add(new Panel(),BorderLayout.SOUTH);
+		add(butonera,BorderLayout.NORTH);
 		add(center);
 		center.add(drawing);
+	}
+
+	private void reviewPassword() {
+		class PasswordGetter extends Dialog implements ActionListener {
+			private final String error = "La contraseña es incorrecta";
+			private Label instruccion;
+			private TextField password;
+			public PasswordGetter(Frame a) {
+				super(a);
+				instruccion = new Label("Ingrese su contraseña:",Label.CENTER);
+				password = new TextField();
+				password.setEchoChar('*');
+				password.addActionListener(PasswordGetter.this);
+				Button button = new Button("Aceptar");
+				button.addActionListener(this);
+				Utils.makeCloseable(this);
+				int width = java.awt.Toolkit.getDefaultToolkit().getScreenSize().width;
+				int height = java.awt.Toolkit.getDefaultToolkit().getScreenSize().height;
+				setResizable(false);
+				add(new Panel(),"South");add(new Panel(),"West");add(new Panel(),"East");add(new Panel(),"North");
+				Panel center = new Panel();
+				add(center);
+				Dimension prefSize = new Dimension(width/6,height/29);
+				password.setPreferredSize(prefSize);
+				center.setLayout(new GridLayout(0,1));
+				center.add(instruccion);
+				center.add(password);
+				Panel bottom = new Panel();
+				center.add(bottom);
+				bottom.add(new Panel());
+				bottom.add(button);
+				bottom.add(new Panel());
+				setVisible(true);
+				pack();
+				setLocation(width/2-width/10,height/2-height/8);
+			}
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (Inventario.password(password.getText())) {
+					changeRoom();
+					dispose();
+				} else  {
+					instruccion.setText(error);
+					pack();
+					java.awt.Toolkit.getDefaultToolkit().beep();
+				}
+			}
+		}
+		if (caja)
+			new PasswordGetter(null);
+		else changeRoom();
+	}
+
+	private void pagar() {
+		inventario.resta(drawing);
+		inventario.save();
+		Inventario.today().suma(drawing).save();
+		drawing = Inventario.venta();
+		center.add(drawing);
+		revalidate();
+		barra.requestFocusInWindow();
 	}
 
 	private void agregar(String string) {
 		if (Utils.isNumber(string))
 			agregar(Long.parseLong(string),spinner.getValue()!=0?spinner.getValue():1);
 		else {
-			//Debug.
 			if (!caja&&flag) {
 				int leng = drawing.length()-1;
 				drawing.setPrecio(leng,spinner.getValue());
 				drawing.setNombre(leng,barra.getText());
 				flag = false;
-				instrucciones.setText("Ingresa el código de barras y la cantidad a añadir.");
+				instrucciones.setText(mensaje[0]);
+				pack();
 			}
 		}
 	}
@@ -111,32 +177,33 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 		        	if (argument0==drawing.getBarcode(i))
 		        		resultado = i; //if exists in the checkout
 		        if (resultado != -1) {//y también en la caja
-		            if (amount+drawing.getValue(3,resultado)>inventario.getValue(3,yDelInventario)) {
+		            if (amount+drawing.getCantidad(resultado)>inventario.getCantidad(yDelInventario)) {
 		            	Utils.dialogo(this,"Inventario insuficiente",Utils.singleton);
 		            	return;
 		            }
 	                drawing.addCantidad(resultado,amount);
 		        	int total = 0;
 		        	for(int i = 0; i < drawing.length();i++) {
-		        		total += (drawing.getValue(2,i)*drawing.getValue(3,i));
+		        		total += (drawing.getPrecio(i)*drawing.getCantidad(i));
 		        	}
 		        	pagar.setLabel("Pagar: $"+Integer.toString(total));//*/
 	                
 		        } else {
-		        	if (amount>inventario.getValue(3,yDelInventario)) {
+		        	if (amount>inventario.getCantidad(yDelInventario)) {
 		            	Utils.dialogo(this,"Inventario insuficiente",Utils.singleton);
 		            	return;
 		            }
 		        	drawing.add(
 		        			argument0,
 		        			inventario.getString(1,yDelInventario),
-		        			inventario.getValue(2,yDelInventario),
+		        			inventario.getPrecio(yDelInventario),
 		        			amount);
 		        	int total = 0;
 		        	for(int i = 0; i < drawing.length();i++) {
-		        		total += (drawing.getValue(2,i)*drawing.getValue(3,i));
+		        		total += (drawing.getPrecio(i)*drawing.getCantidad(i));
 		        	}
-		        	pagar.setLabel("Pagar: $"+Integer.toString(Debug.print(total)));
+		        	pagar.setLabel("Pagar: $"+Integer.toString(total));
+		        	pack();
 		        }
 		    } else {
 		    	inventario.addCantidad(resultado,amount);}
@@ -145,7 +212,8 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 				if (!flag ) {
 					inventario.add(argument0,amount);
 					flag = true;
-					instrucciones.setText("Ingresa el nombre de artículo y el precio.");
+					instrucciones.setText(mensaje[1]);
+					pack();
 				}
 		    }
 		}
@@ -161,14 +229,10 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		inventario.save();
+		drawing.save();
+		if (caja)
+			inventario.save();
 		dispose();
-	}
-	public static Ventana singleton(boolean caja) {
-		if (Inventario.singleton == null)
-			return new Ventana(caja);
-		Inventario.singleton.changeRoom(caja);
-		return Inventario.singleton;
 	}
 	@Override
 	public void windowOpened(WindowEvent e) {}
@@ -182,5 +246,4 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	public void windowActivated(WindowEvent e) {}
 	@Override
 	public void windowDeactivated(WindowEvent e) {}
-	
 }

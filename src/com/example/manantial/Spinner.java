@@ -6,7 +6,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.TextField;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -19,9 +18,11 @@ public class Spinner extends Panel {
 	public Spinner() {
 		super(new GridBagLayout());
 		Button arriba = new Button("^");
-		arriba.addActionListener((ActionEvent e)->spinnerText.setValue(getValue()+1));//*/
+		arriba.setFocusable(false);
+		arriba.addActionListener((e)->spinnerText.setValue(getValue()+1));//*/
 		Button abajo = new Button("v");
-		abajo.addActionListener((ActionEvent e)->spinnerText.setValue(getValue()-1));
+		abajo.setFocusable(false);
+		abajo.addActionListener((e)->spinnerText.setValue(getValue()-1));
 		Panel right = new Panel(new GridLayout(2,1));
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = 3;
@@ -78,7 +79,7 @@ public class Spinner extends Panel {
 				return;
 			}
 			if (getText().length()>3) {
-				super.setText(getText().substring(0,2));
+				super.setText(getText().substring(0,3));
 				if (Integer.toString(intValue).equals(getText()))
 					return;
 			}
@@ -88,7 +89,7 @@ public class Spinner extends Panel {
 						intValue = Integer.parseInt(getText());
 					else
 						if (getCaretPosition()==getText().length()) {
-							setText(getText().substring(1,Debug.print(getText().length())));
+							setText(getText().substring(1,getText().length()));
 							setCaretPosition(getText().length());
 						}
 				}
