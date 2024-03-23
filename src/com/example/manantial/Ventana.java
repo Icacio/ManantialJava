@@ -1,5 +1,6 @@
 package com.example.manantial;
 
+import static com.example.manantial.Inventario.inventario;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +14,6 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	private final Label instrucciones = new Label(mensaje[0]);
 	private final Button pagar = new Button("Pagar: $0    ");
 	private final ScrollPane center = new ScrollPane();
-	private final Inventario inventario = Inventario.inventario;
 	private static String mensaje[] = {"Ingresa el código de barras y la cantidad a añadir.",
 			"Ingresa el nombre de artículo y el precio."};
 	private Inventario drawing;

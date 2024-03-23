@@ -22,7 +22,7 @@ public class Spinner extends Panel {
 		arriba.addActionListener((e)->spinnerText.setValue(getValue()+1));//*/
 		Button abajo = new Button("v");
 		abajo.setFocusable(false);
-		abajo.addActionListener((e)->spinnerText.setValue(getValue()-1));
+		abajo.addActionListener((e)->spinnerText.setValue(getValue()>0?getValue()-1:0));
 		Panel right = new Panel(new GridLayout(2,1));
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = 3;
