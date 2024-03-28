@@ -1,13 +1,20 @@
-package com.example.manantial;
+package com.example.manantial.vista;
 
 import java.lang.String;
 import java.util.Hashtable;
+
+import com.example.manantial.controlador.Utils;
+
+import static com.example.manantial.controlador.Controlador.inventario;
+import static com.example.manantial.controlador.Controlador.ventana;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.List;
 import java.awt.Panel;
 import java.awt.TextField;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
@@ -17,16 +24,16 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+//import java.awt.event.MouseMotionListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
-public class SearchBox extends TextField implements MouseMotionListener, KeyListener,
-	TextListener, FocusListener, ComponentListener, ItemListener {
+public class SearchBox extends TextField implements KeyListener,
+	TextListener, FocusListener, ComponentListener, ItemListener, ActionListener {
 
    private Window window;
    private Hashtable<String,String> table;
-   private List[] results = new List[3];
+   public List[] results = new List[3];
 
    SearchBox (int i) {
 	   super(null,i);
@@ -34,15 +41,26 @@ public class SearchBox extends TextField implements MouseMotionListener, KeyList
 	   addFocusListener(this);
 	   addComponentListener(this);
 	   addKeyListener(this);
+	   addActionListener(this);
    }
-
+   
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (Utils.isNumber(getText())) 
+			ventana.actionPerformed(e);
+		else {
+			var sel = results[0].getSelectedItem();
+			if (sel!=null)
+				setText(table.get(sel));
+		}
+	}
+	
 	@Override
 	public void textValueChanged(TextEvent e) {
 		window().removeAll();
 		String[][] coincidence = {{},{},{}};
 		int coincidences = 0;
-		Inventario inventario = Inventario.inventario;
-		if (!getText().equals("")&&!Utils.isNumber(getText())) {
+		if (!getText().equals("")&&!getText().equals(" ")&&!Utils.isNumber(getText())) {
 		    int length = inventario.length();
 		    for (int i = 0; i < length;i++) {
 		    	String a = inventario.getString(1,i);
@@ -63,7 +81,7 @@ public class SearchBox extends TextField implements MouseMotionListener, KeyList
 		    		results[i] = new List(coincidences);
 		    		List list = results[i];
 		    		list.addItemListener(this);
-		    		list.addMouseMotionListener(this);
+		    		//list.addMouseMotionListener(this);
 		    	}
 		    	window.add(results[0]);
 		    	Panel right = new Panel(new GridLayout(0,2));
@@ -104,12 +122,13 @@ public class SearchBox extends TextField implements MouseMotionListener, KeyList
 		results[non[0]].select(selected);
 		results[non[1]].select(selected);
 	}
-	@Override
+	/*@Override
 	public void mouseMoved(MouseEvent e) {
 		List list = (List)e.getSource();
-		list.select((e.getY()+2)*(list.getRows()+1)/list.getHeight());
+		var a = (e.getY()+2)*(list.getRows()+1)/list.getHeight();
+		list.select(a);
 		actionPerformed(list);
-	}
+	}*/
 	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
@@ -144,13 +163,15 @@ public class SearchBox extends TextField implements MouseMotionListener, KeyList
 
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		java.awt.Point location = getLocationOnScreen();
-		window().setLocation(location.x, location.y + getBounds().height);
+		if (Utils.getWindow(this).isVisible()) {
+			java.awt.Point location = getLocationOnScreen();
+			window().setLocation(location.x, location.y + getBounds().height);
+		}
 	}
-
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if (results[0]==null) return;
 		int index;
 		if (e.getKeyCode()==KeyEvent.VK_DOWN) {
 			index = results[0].getSelectedIndex()+1;

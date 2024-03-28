@@ -1,4 +1,4 @@
-package com.example.manantial;
+package com.example.manantial.vista;
 
 import java.awt.Button;
 import java.awt.GridBagConstraints;
@@ -6,14 +6,18 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.TextField;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
+import com.example.manantial.controlador.Utils;
+
+import java.awt.event.ActionListener;
+
+
 public class Spinner extends Panel {
-	public final NumberField spinnerText = new NumberField();
+	private final NumberField spinnerText = new NumberField();
 	
 	public Spinner() {
 		super(new GridBagLayout());
@@ -37,12 +41,27 @@ public class Spinner extends Panel {
 		spinnerText.setValue(value);
 		return value;
 	}
+	public void addActionListener(ActionListener l) {
+		spinnerText.addActionListener(l);
+	}
+	
 	int getValue() {
 		return spinnerText.getValue();
 	}
 	class NumberField extends TextField implements TextListener, FocusListener {
 		
 		private int intValue = 0;
+		
+		/*@Override
+		protected void processActionEvent(ActionEvent e) {
+	        new Throwable().printStackTrace();
+	        var listener = getActionListeners()[0];
+	        if (listener != null) {
+	            listener.actionPerformed(e);
+	        }
+	        
+	        
+	    }*/
 		
 		
 		private NumberField() {
@@ -108,9 +127,5 @@ public class Spinner extends Panel {
 
 		@Override
 		public void focusLost(FocusEvent e) {}
-	}
-	
-	public void addActionListener(ActionListener l) {
-		spinnerText.addActionListener(l);
 	}
 }

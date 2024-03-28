@@ -1,10 +1,13 @@
-package com.example.manantial;
+package com.example.manantial.controlador;
 
 import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+
+import com.example.manantial.vista.Language;
+
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Component;
@@ -18,8 +21,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 
+import static com.example.manantial.controlador.Controlador.working_dir;
+
 public final class Utils extends WindowAdapter implements ActionListener {
-	static final Utils singleton = new Utils();
+	public static final Utils singleton = new Utils();
 	
 	private Utils() {}
 	public static void makeCloseable(Window window) {
@@ -32,8 +37,18 @@ public final class Utils extends WindowAdapter implements ActionListener {
 	public void windowClosing(WindowEvent e) {
 		e.getWindow().dispose();
 	}
-	
-	public static Dialog dialogo (Window source, String a, ActionListener b) {
+	/**
+     * Creates a generic Dialog
+     * 
+     * @param  source The parent for the dialog
+     * 
+     * @param  text The message to put on the Dialog
+     * 
+     * @param  b what to do when accepted
+     * 
+     * @return The function returns the object itself.
+     */
+	public static Dialog dialogo (Window source, String text, ActionListener b) {
 		Dialog error = new Dialog(source);
 		error.setLayout(new BorderLayout());
 		Utils.makeCloseable(error);
@@ -43,9 +58,9 @@ public final class Utils extends WindowAdapter implements ActionListener {
 		error.add(new Panel(),BorderLayout.SOUTH);
 		Panel center = new Panel(new BorderLayout());
 		error.add(center);
-		center.add(new Label(a),BorderLayout.NORTH);
+		center.add(new Label(text),BorderLayout.NORTH);
 		Panel south = new Panel();
-		Button button = new Button("Aceptar");
+		Button button = new Button(Language.accept);
 		south.add(new Panel());
 		south.add(button);
 		south.add(new Panel());
@@ -101,14 +116,14 @@ public final class Utils extends WindowAdapter implements ActionListener {
 		return getWindow(((Component)e.getSource()).getParent());
 	}
 	public static Window getWindow(Component c) {
-		if (c==null) return Inventario.ventana;
+		if (c==null) return Controlador.ventana;
 		if (c.getParent() instanceof Window)
 			return (Window) c.getParent();
 		return getWindow(c.getParent());
 	}//*/
 	
 	public static BufferedWriter file(String string) throws UnsupportedEncodingException, FileNotFoundException {
-		string = Inventario.working_dir+string;
+		string = working_dir+string;
 		int i;
 		for (i = string.length()-1; i > -1; i--) {
 			if (string.charAt(i)=='\\') break;
