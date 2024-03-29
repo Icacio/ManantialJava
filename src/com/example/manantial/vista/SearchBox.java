@@ -2,11 +2,6 @@ package com.example.manantial.vista;
 
 import java.lang.String;
 import java.util.Hashtable;
-
-import com.example.manantial.controlador.Utils;
-
-import static com.example.manantial.controlador.Controlador.inventario;
-import static com.example.manantial.controlador.Controlador.ventana;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.List;
@@ -24,9 +19,11 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-//import java.awt.event.MouseMotionListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
+import com.example.manantial.controlador.Utils;
+import static com.example.manantial.controlador.Controlador.inventario;
+import static com.example.manantial.controlador.Controlador.ventana;
 
 public class SearchBox extends TextField implements KeyListener,
 	TextListener, FocusListener, ComponentListener, ItemListener, ActionListener {
@@ -122,13 +119,6 @@ public class SearchBox extends TextField implements KeyListener,
 		results[non[0]].select(selected);
 		results[non[1]].select(selected);
 	}
-	/*@Override
-	public void mouseMoved(MouseEvent e) {
-		List list = (List)e.getSource();
-		var a = (e.getY()+2)*(list.getRows()+1)/list.getHeight();
-		list.select(a);
-		actionPerformed(list);
-	}*/
 	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
