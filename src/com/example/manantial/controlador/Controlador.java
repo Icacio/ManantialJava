@@ -21,7 +21,7 @@ public class Controlador {
 		try (var con = getCon(false);var st = con.createStatement()) {//read the database without password
 			return readTable(st,"Inventario");
 		} catch (SQLException e) {
-			return null;
+			return new Tabla();
 		}
 	}
 	
