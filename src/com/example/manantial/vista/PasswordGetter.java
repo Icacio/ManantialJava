@@ -17,10 +17,12 @@ public class PasswordGetter extends Dialog implements ActionListener, WindowList
 	private TextField confirmPassword = new TextField();
 	private TextField password = new TextField();
 	public String response;
+	private boolean creatingPassword;
 	
-	public PasswordGetter() {
+	public PasswordGetter(boolean doWeCreatePassword) {
 		super(null,"Contraseña",Dialog.DEFAULT_MODALITY_TYPE);
-		instruccion = new Label(Language.passGetter[0],1);
+		creatingPassword = doWeCreatePassword;
+		instruccion = new Label(Language.passGetter[doWeCreatePassword?0:2],1);
 		Button button = new Button(Language.accept);
 		Panel center = new Panel();
 		Panel bottom = new Panel();
@@ -43,12 +45,14 @@ public class PasswordGetter extends Dialog implements ActionListener, WindowList
 		center.add(instruccion);
 		center.add(password);
 
-		Label confirmar = new Label(Language.passGetter[1],1);
-		confirmPassword.setEchoChar('*');
-		confirmPassword.addActionListener(this);
-		confirmPassword.setPreferredSize(prefSize);
-		center.add(confirmar);
-		center.add(confirmPassword);
+		if (creatingPassword) {
+			Label confirmar = new Label(Language.passGetter[1],1);
+			confirmPassword.setEchoChar('*');
+			confirmPassword.addActionListener(this);
+			confirmPassword.setPreferredSize(prefSize);
+			center.add(confirmar);
+			center.add(confirmPassword);
+		}
 		
 		center.add(bottom);
 		
@@ -64,7 +68,7 @@ public class PasswordGetter extends Dialog implements ActionListener, WindowList
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		var pass = password.getText(); 
-		if (pass.equals(confirmPassword.getText())) {
+		if (!creatingPassword||pass.equals(confirmPassword.getText())) {
 			if (!pass.equals("")) {
 				if (pass.contains("'")) {
 					pass.replace("'","\\'");

@@ -25,7 +25,7 @@ public class Controlador {
 		} catch (SQLException e) {
 			switch (e.getSQLState()) {
 			case "XJ004"://database doesn't exist
-				var pass = new PasswordGetter().response;
+				var pass = new PasswordGetter(true).response;
 				try (var con = getCon(true);var st = con.createStatement()) {
 					con.setSchema("APP");
 					setPassword(pass,con);
@@ -33,6 +33,19 @@ public class Controlador {
 				} catch (SQLException e1) {
 					abort(e1);
 				}
+				break;
+			case "08004"://Authentication error
+				do {
+					try (var con = getCon(";user=root;password="+new PasswordGetter(false).response)) {
+						con.setSchema("APP");
+						return readTable(con.createStatement(),"Inventario");
+					} catch (SQLException e1) {
+						if (!e1.getSQLState().equals("08004"))
+							abort(e1);
+						e = e1;
+					}
+				} while (e.getSQLState().equals("08004"));
+					
 				break;
 			}
 			abort(e);
