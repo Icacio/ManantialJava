@@ -10,4 +10,5 @@ public class Language {
 	public static final String add = "Agregar";
 	public static final String accept = "Aceptar";
 	public static final String pay = "Pagar: $";
+	public static final String libraryError = "Ha ocurrido un error con la base de datos, asegúrate de tener las librerias adecuadas.";
 }

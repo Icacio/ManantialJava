@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+
+import com.example.manantial.controlador.Utils;
 import com.example.manantial.modelo.Tabla;
 
 import static com.example.manantial.controlador.Controlador.inventario;
@@ -25,6 +27,10 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	private final ScrollPane center = new ScrollPane();
 	private Tabla drawing = inventario;
 
+	private Ventana() {
+		Utils.makeCloseable(this);
+	}
+	
 	public void setVisible() {
 		setTitle(Language.titulo[1]);
 		Panel butonera = new Panel();

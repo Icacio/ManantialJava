@@ -6,9 +6,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.example.manantial.modelo.Tabla;
+import com.example.manantial.vista.MyDialog;
 import com.example.manantial.vista.PasswordGetter;
 
 import static com.example.manantial.vista.Ventana.ventana;
+import static com.example.manantial.vista.Language.passwordError;
 
 public class Controlador {
 	
@@ -42,6 +44,7 @@ public class Controlador {
 					} catch (SQLException e1) {
 						if (!e1.getSQLState().equals("08004"))
 							abort(e1);
+						new MyDialog(passwordError);
 						e = e1;
 					}
 				} while (e.getSQLState().equals("08004"));
@@ -118,6 +121,6 @@ public class Controlador {
 		System.out.println(e1.getMessage());
 		System.out.print(e1.getSQLState());
 		e1.printStackTrace();
-		System.exit(-1);
+		Utils.dialogoError();
 	}
 }
