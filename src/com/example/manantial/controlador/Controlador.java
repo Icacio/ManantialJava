@@ -44,7 +44,7 @@ public class Controlador {
 			}
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("42X05")) {
-				return createTable(st,tableName);
+				return null;
 			} else throw e;
 		}
 		try (var rs = st.executeQuery("SELECT * FROM "+tableName)) {
