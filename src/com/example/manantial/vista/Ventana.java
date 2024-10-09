@@ -24,10 +24,9 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	private final Button pagar = new Button(Language.pay+"0    ");
 	private final ScrollPane center = new ScrollPane();
 	private Tabla drawing = inventario;
-	
-	
-	private Ventana () {
-		super(Language.titulo[1]);
+
+	public void setVisible() {
+		setTitle(Language.titulo[1]);
 		Panel butonera = new Panel();
 		Button botonAgregar = new Button(Language.add);
 		butonera.add(instrucciones);
@@ -43,6 +42,7 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 		add(center);
 		center.add(drawing);
 		pack();
+		super.setVisible(true);
 	}
 	
 	@Override

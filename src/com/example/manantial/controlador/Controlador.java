@@ -14,7 +14,7 @@ public class Controlador {
 	public static final Tabla inventario = getInventario();
 	
 	public static void main (String args[]) {
-		ventana.setVisible(true);
+		ventana.setVisible();
 	}
 	
 	private static Tabla getInventario() {
