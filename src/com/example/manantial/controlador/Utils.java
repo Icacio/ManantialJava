@@ -11,6 +11,7 @@ import static com.example.manantial.vista.Ventana.ventana;
 
 import com.example.manantial.vista.Language;
 import com.example.manantial.vista.MyDialog;
+import com.example.manantial.vista.PasswordGetter;
 
 public final class Utils extends WindowAdapter implements ActionListener {
 	public static final Utils singleton = new Utils();
@@ -39,5 +40,9 @@ public final class Utils extends WindowAdapter implements ActionListener {
 	public static void dialogoError() {
 		new MyDialog(Language.libraryError);
 		System.exit(-1);
+	}
+
+	public static String requestPassword() {
+		return new PasswordGetter(false).response;
 	}
 }
