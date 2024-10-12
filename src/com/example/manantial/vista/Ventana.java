@@ -33,6 +33,7 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	
 	public void setVisible() {
 		setTitle(Language.titulo[1]);
+		addWindowListener(this);
 		Panel butonera = new Panel();
 		setFont(new Font("arial", Font.PLAIN, 16));
 		Button botonAgregar = new Button(Language.add);
@@ -59,6 +60,7 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	}
 	@Override
 	public void windowClosing(WindowEvent e) {
+		setVisible(false);
 		drawing.save();
 		dispose();
 	}

@@ -52,4 +52,6 @@ public class Tabla {
 	public int length() {
 		return length;
 	}
+	public void save () {
+	}
 }
