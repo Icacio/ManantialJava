@@ -1,30 +1,29 @@
-package com.example.manantial.modelo;
+package com.example.manantial.controlador;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static com.example.manantial.controlador.MainController.working_dir;
-
-import com.example.manantial.controlador.Utils;
-import com.example.manantial.vista.Language;
+import com.example.manantial.modelo.Tabla;
 import com.example.manantial.vista.MyDialog;
 import com.example.manantial.vista.PasswordGetter;
 
+import static com.example.manantial.vista.Ventana.ventana;
+import static com.example.manantial.vista.Language.passwordError;
 
-public class Inventario extends Tabla {
-
-	public static final Inventario singleton = new Inventario();
-
-	private Inventario() {
-		super("Inventario");
-		getInventario();
+public class Controlador {
+	
+	public final static String working_dir = System.getProperty("os.name").toLowerCase().contains("win")?System.getenv("APPDATA")+"\\manantial\\":"\\";
+	public static final Tabla inventario = getInventario();
+	
+	public static void main (String args[]) {
+		ventana.setVisible();
 	}
 	
-	private void getInventario() {
+	private static Tabla getInventario() {
 		try (var con = getCon(false);var st = con.createStatement()) {//read the database without password
-			readTable(st);
+			return readTable(st,"Inventario");
 		} catch (SQLException e) {
 			switch (e.getSQLState()) {
 			case "XJ004"://database doesn't exist
@@ -32,27 +31,28 @@ public class Inventario extends Tabla {
 				try (var con = getCon(true);var st = con.createStatement()) {
 					con.setSchema("APP");
 					setPassword(pass,con);
-					createTable(st);
+					return createTable(st,"Inventario");
 				} catch (SQLException e1) {
 					abort(e1);
 				}
 				break;
 			case "08004"://Authentication error
 				do {
-					try (var con = getCon(";user=root;password="+Utils.requestPassword())) {
+					try (var con = getCon(";user=root;password="+new PasswordGetter(false).response)) {
 						con.setSchema("APP");
-						readTable(con.createStatement());
+						return readTable(con.createStatement(),"Inventario");
 					} catch (SQLException e1) {
 						if (!e1.getSQLState().equals("08004"))
 							abort(e1);
-						new MyDialog(Language.passwordError);
+						new MyDialog(passwordError);
 						e = e1;
 					}
 				} while (e.getSQLState().equals("08004"));
+					
 				break;
-				default:
-					abort(e);
 			}
+			abort(e);
+			return new Tabla();
 		}
 	}
 	
@@ -67,37 +67,35 @@ public class Inventario extends Tabla {
 		return a;
 	}
 
-	private void readTable(Statement st) throws SQLException {
+	static Tabla readTable(Statement st, String tableName) throws SQLException {
 		int i = 0;
-		try (var rs = st.executeQuery("SELECT COUNT(*) AS rowcount FROM Inventario")) {
+		try (var rs = st.executeQuery("SELECT COUNT(*) AS rowcount FROM "+tableName)) {
 			while(rs.next()) {
 				i = rs.getInt("rowcount");
 			}
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("42X05")) {
-				createTable(st);
-				return;
+				return null;
 			} else throw e;
 		}
-		var rs = st.executeQuery("SELECT * FROM Inventario");
-		var codigo = new long[i];
-		var nombre = new String[i];
-		var precio = new int[i];
-		var cantid = new int[i];
-		var j = 0;
-		while(rs.next()) {
-			codigo[j] = rs.getLong("codigo");
-			nombre[j] = rs.getString("nombre");
-			precio[j] = rs.getInt("precio");
-			cantid[j] = rs.getInt("cantidad");
+		try (var rs = st.executeQuery("SELECT * FROM "+tableName)) {
+			var codigo = new long[i];
+			var nombre = new String[i];
+			var precio = new int[i];
+			var cantid = new int[i];
+			while(rs.next()) {
+				codigo[i] = rs.getLong("codigo");
+				nombre[i] = rs.getString("nombre");
+				precio[i] = rs.getInt("precio");
+				cantid[i] = rs.getInt("cantidad");
+			}
+			rs.close();
+			return new Tabla(codigo,nombre,precio,cantid);
+		} catch (SQLException e) {
+			throw e;
 		}
-		this.codigo = codigo;
-		this.nombre = nombre;
-		this.precio = precio;
-		this.cantidad = cantid;
-		rs.close();
 	}
-
+	
 	public static void setPassword(String text,Connection conn) {
 		try (Statement s = conn.createStatement()) {
 			s.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.connection.requireAuthentication', 'true')");
@@ -109,17 +107,20 @@ public class Inventario extends Tabla {
 		}
 	}
 	
-	private void createTable(Statement st) throws SQLException {
-		st.execute("CREATE TABLE Inventario ("
+	private static Tabla createTable(Statement st, String tableName) throws SQLException {
+		st.execute("CREATE TABLE "+tableName+" ("
 			+ "codigo int NOT NULL,"
 			+ "nombre varchar(255) NOT NULL,"
 			+ "precio int NOT NULL,"
 			+ "cantidad int NOT NULL,"
 			+ "PRIMARY KEY (codigo))");
+		return new Tabla();
 	}
-	
-	public static void abort(SQLException e) {
-		System.out.print(e.getSQLState());
-		abort(e);
+
+	public static void abort(SQLException e1) {
+		System.out.println(e1.getMessage());
+		System.out.print(e1.getSQLState());
+		e1.printStackTrace();
+		Utils.dialogoError();
 	}
 }

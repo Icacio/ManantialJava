@@ -1,16 +1,15 @@
 package com.example.manantial.modelo;
 import java.awt.Canvas;
 public class Tabla extends Canvas {
-	protected String table_name;
-	protected long[] codigo;
-	protected int[] cantidad;
-	protected int[] precio;
-	protected String[] nombre;
-	protected int length;
-	protected static final int width = 4;
+	
+	private long[] codigo;
+	private int[] cantidad;
+	private int[] precio;
+	private String[] nombre;
+	private int length;
+	private static final int width = 4;
 	//constructors
-	public Tabla(String tableName) {
-		table_name = tableName;
+	public Tabla() {
 		codigo = new long[1];
 		nombre = new String[1];
 		precio = new int[1];

@@ -14,7 +14,7 @@ import java.awt.event.WindowListener;
 import com.example.manantial.controlador.Utils;
 import com.example.manantial.modelo.Tabla;
 
-import static com.example.manantial.controlador.MainController.inventario;
+import static com.example.manantial.controlador.Controlador.inventario;
 
 public class Ventana extends Frame implements ActionListener, WindowListener {
 
