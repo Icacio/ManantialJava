@@ -1,46 +1,47 @@
-package com.example.manantial.controlador;
+package com.example.manantial.modelo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.example.manantial.modelo.Tabla;
+import com.example.manantial.controlador.MainController;
 import com.example.manantial.vista.MyDialog;
 import com.example.manantial.vista.PasswordGetter;
 
-import static com.example.manantial.vista.Ventana.ventana;
 import static com.example.manantial.vista.Language.passwordError;
+import static com.example.manantial.controlador.Utils.requestPassword;
+import static com.example.manantial.controlador.MainController.working_dir;
 
-public class Controlador {
+public class Inventario extends Tabla {
+	public static final Inventario singleton = new Inventario();
 	
-	public final static String working_dir = System.getProperty("os.name").toLowerCase().contains("win")?System.getenv("APPDATA")+"\\manantial\\":"\\";
-	public static final Tabla inventario = getInventario();
-	
-	public static void main (String args[]) {
-		ventana.setVisible();
+	private Inventario() {
+		getInventario();
 	}
 	
-	private static Tabla getInventario() {
+	private void getInventario() {
 		try (var con = getCon(false);var st = con.createStatement()) {//read the database without password
-			return readTable(st,"Inventario");
+			readTable(st);
 		} catch (SQLException e) {
 			switch (e.getSQLState()) {
 			case "XJ004"://database doesn't exist
 				var pass = new PasswordGetter(true).response;
+				System.out.println(pass);
 				try (var con = getCon(true);var st = con.createStatement()) {
 					con.setSchema("APP");
-					setPassword(pass,con);
-					return createTable(st,"Inventario");
+					createTable(st,pass);
+					return;
 				} catch (SQLException e1) {
 					abort(e1);
 				}
 				break;
 			case "08004"://Authentication error
 				do {
-					try (var con = getCon(";user=root;password="+new PasswordGetter(false).response)) {
+					try (var con = getCon(";user=root;password="+requestPassword())) {
 						con.setSchema("APP");
-						return readTable(con.createStatement(),"Inventario");
+						readTable(con.createStatement());
+						return;
 					} catch (SQLException e1) {
 						if (!e1.getSQLState().equals("08004"))
 							abort(e1);
@@ -48,11 +49,9 @@ public class Controlador {
 						e = e1;
 					}
 				} while (e.getSQLState().equals("08004"));
-					
 				break;
 			}
 			abort(e);
-			return new Tabla();
 		}
 	}
 	
@@ -67,9 +66,9 @@ public class Controlador {
 		return a;
 	}
 
-	static Tabla readTable(Statement st, String tableName) throws SQLException {
+	static Tabla readTable(Statement st) throws SQLException {
 		int i = 0;
-		try (var rs = st.executeQuery("SELECT COUNT(*) AS rowcount FROM "+tableName)) {
+		try (var rs = st.executeQuery("SELECT COUNT(*) AS rowcount FROM Inventario")) {
 			while(rs.next()) {
 				i = rs.getInt("rowcount");
 			}
@@ -78,7 +77,7 @@ public class Controlador {
 				return null;
 			} else throw e;
 		}
-		try (var rs = st.executeQuery("SELECT * FROM "+tableName)) {
+		try (var rs = st.executeQuery("SELECT * FROM Inventario")) {
 			var codigo = new long[i];
 			var nombre = new String[i];
 			var precio = new int[i];
@@ -96,31 +95,21 @@ public class Controlador {
 		}
 	}
 	
-	public static void setPassword(String text,Connection conn) {
-		try (Statement s = conn.createStatement()) {
-			s.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.connection.requireAuthentication', 'true')");
-			s.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.authentication.provider', 'BUILTIN')");
-			s.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.user.root', '"+text+"')");
-			s.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.database.propertiesOnly', 'true')");
-		} catch (SQLException e) {
-			abort(e);
-		}
-	}
-	
-	private static Tabla createTable(Statement st, String tableName) throws SQLException {
-		st.execute("CREATE TABLE "+tableName+" ("
+	private void createTable(Statement st,String pass) throws SQLException {
+		st.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.connection.requireAuthentication', 'true')");
+		st.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.authentication.provider', 'BUILTIN')");
+		st.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.user.root', '"+pass+"')");
+		st.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.database.propertiesOnly', 'true')");
+		st.execute("CREATE TABLE Inventario ("
 			+ "codigo int NOT NULL,"
 			+ "nombre varchar(255) NOT NULL,"
 			+ "precio int NOT NULL,"
 			+ "cantidad int NOT NULL,"
 			+ "PRIMARY KEY (codigo))");
-		return new Tabla();
 	}
 
-	public static void abort(SQLException e1) {
-		System.out.println(e1.getMessage());
-		System.out.print(e1.getSQLState());
-		e1.printStackTrace();
-		Utils.dialogoError();
+	public static void abort(SQLException e) {
+		System.out.println(e.getSQLState());
+		MainController.abort(e);
 	}
 }

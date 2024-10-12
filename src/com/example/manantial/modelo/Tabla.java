@@ -2,19 +2,19 @@ package com.example.manantial.modelo;
 import java.awt.Canvas;
 public class Tabla extends Canvas {
 	
-	private long[] codigo;
-	private int[] cantidad;
-	private int[] precio;
-	private String[] nombre;
-	private int length;
-	private static final int width = 4;
+	protected long[] codigo;
+	protected int[] cantidad;
+	protected int[] precio;
+	protected String[] nombre;
+	protected int length;
+	public static final int width = 4;
 	//constructors
 	public Tabla() {
 		codigo = new long[1];
 		nombre = new String[1];
 		precio = new int[1];
 		cantidad = new int[1];
-		length = 1;
+		length = 0;
 	}
 	public Tabla(long[] codigo2, String[] nombre2, int[] precio2, int[] cantid2) {
 		codigo = codigo2;
