@@ -1,6 +1,6 @@
 package com.example.manantial.modelo;
-import java.awt.Canvas;
-public class Tabla extends Canvas {
+
+public class Tabla {
 	
 	protected long[] codigo;
 	protected int[] cantidad;

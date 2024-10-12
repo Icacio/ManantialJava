@@ -77,22 +77,24 @@ public class Inventario extends Tabla {
 				return null;
 			} else throw e;
 		}
-		try (var rs = st.executeQuery("SELECT * FROM Inventario")) {
-			var codigo = new long[i];
-			var nombre = new String[i];
-			var precio = new int[i];
-			var cantid = new int[i];
-			while(rs.next()) {
-				codigo[i] = rs.getLong("codigo");
-				nombre[i] = rs.getString("nombre");
-				precio[i] = rs.getInt("precio");
-				cantid[i] = rs.getInt("cantidad");
-			}
-			rs.close();
-			return new Tabla(codigo,nombre,precio,cantid);
-		} catch (SQLException e) {
-			throw e;
+		var rs = st.executeQuery("SELECT * FROM Inventario");
+		var codigo = new long[i+1];
+		var nombre = new String[i+1];
+		var precio = new int[i+1];
+		var cantid = new int[i+1];
+		i = 0; 
+		while(rs.next()) {
+			codigo[i] = rs.getLong("codigo");
+			nombre[i] = rs.getString("nombre");
+			precio[i] = rs.getInt("precio");
+			cantid[i++] = rs.getInt("cantidad");
 		}
+		rs.close();
+		this.codigo = codigo;
+		this.nombre = nombre;
+		this.precio = precio;
+		this.cantidad = cantid;
+		length = codigo.length;
 	}
 	
 	private void createTable(Statement st,String pass) throws SQLException {

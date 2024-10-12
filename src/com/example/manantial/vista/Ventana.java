@@ -1,7 +1,10 @@
 package com.example.manantial.vista;
+
 import java.awt.Frame;
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.ScrollPane;
@@ -26,14 +29,12 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	private final Button pagar = new Button(Language.pay+"0    ");
 	private final ScrollPane center = new ScrollPane();
 	private Tabla drawing = inventario;
-
-	private Ventana() {
-		Utils.makeCloseable(this);
-	}
+	private TableView activeTabla = new TableView(drawing);
 	
 	public void setVisible() {
 		setTitle(Language.titulo[1]);
 		Panel butonera = new Panel();
+		setFont(new Font("arial", Font.PLAIN, 16));
 		Button botonAgregar = new Button(Language.add);
 		butonera.add(instrucciones);
 		butonera.add(barra);
@@ -41,12 +42,14 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 		butonera.add(botonAgregar);
 		butonera.add(botonInventario);
 		butonera.add(pagar);
+		activeTabla.setPreferredSize(new Dimension(
+				activeTabla.getPreferredSize().width,drawing.length()*getFont().getSize()));
 		add(new Panel(),BorderLayout.EAST);
 		add(new Panel(),BorderLayout.WEST);
 		add(new Panel(),BorderLayout.SOUTH);
 		add(butonera,BorderLayout.NORTH);
 		add(center);
-		center.add(drawing);
+		center.add(activeTabla);
 		pack();
 		super.setVisible(true);
 	}
@@ -56,6 +59,7 @@ public class Ventana extends Frame implements ActionListener, WindowListener {
 	}
 	@Override
 	public void windowClosing(WindowEvent e) {
+		drawing.save();
 		dispose();
 	}
 	@Override
