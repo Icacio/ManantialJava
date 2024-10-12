@@ -15,6 +15,8 @@ import static com.example.manantial.controlador.MainController.working_dir;
 
 public class Inventario extends Tabla {
 	public static final Inventario singleton = new Inventario();
+	private static final String userPlusPass = ";user=root;password=";
+	private String pass;
 	
 	private Inventario() {
 		getInventario();
@@ -38,9 +40,10 @@ public class Inventario extends Tabla {
 				break;
 			case "08004"://Authentication error
 				do {
-					try (var con = getCon(";user=root;password="+requestPassword())) {
-						con.setSchema("APP");
+					var pas = requestPassword(); 
+					try (var con = getCon(userPlusPass+pas)) {
 						readTable(con.createStatement());
+						this.pass = pas;
 						return;
 					} catch (SQLException e1) {
 						if (!e1.getSQLState().equals("08004"))
@@ -66,7 +69,7 @@ public class Inventario extends Tabla {
 		return a;
 	}
 
-	static Tabla readTable(Statement st) throws SQLException {
+	void readTable(Statement st) throws SQLException {
 		int i = 0;
 		try (var rs = st.executeQuery("SELECT COUNT(*) AS rowcount FROM Inventario")) {
 			while(rs.next()) {
@@ -74,7 +77,7 @@ public class Inventario extends Tabla {
 			}
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("42X05")) {
-				return null;
+				return;
 			} else throw e;
 		}
 		var rs = st.executeQuery("SELECT * FROM Inventario");
@@ -103,11 +106,12 @@ public class Inventario extends Tabla {
 		st.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.user.root', '"+pass+"')");
 		st.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.database.propertiesOnly', 'true')");
 		st.execute("CREATE TABLE Inventario ("
-			+ "codigo int NOT NULL,"
+			+ "codigo bigint NOT NULL,"
 			+ "nombre varchar(255) NOT NULL,"
 			+ "precio int NOT NULL,"
 			+ "cantidad int NOT NULL,"
 			+ "PRIMARY KEY (codigo))");
+		this.pass = pass;
 	}
 
 	public static void abort(SQLException e) {
