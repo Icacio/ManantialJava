@@ -45,4 +45,14 @@ public final class Utils extends WindowAdapter implements ActionListener {
 	public static String requestPassword() {
 		return new PasswordGetter(false).response;
 	}
+
+	public static boolean isNumber(String t) {
+		try {
+			Integer.parseInt(t);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
 }
