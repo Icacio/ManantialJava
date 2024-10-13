@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import com.example.manantial.controlador.Utils;
 import com.example.manantial.modelo.Tabla;
 
 import static com.example.manantial.controlador.MainController.inventario;

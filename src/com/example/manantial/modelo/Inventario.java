@@ -51,7 +51,6 @@ public class Inventario extends Tabla {
 			switch (e.getSQLState()) {
 			case "XJ004"://database doesn't exist
 				var pass = new PasswordGetter(true).response;
-				System.out.println(pass);
 				try (var con = getCon(true);var st = con.createStatement()) {
 					con.setSchema("APP");
 					createTable(st,pass);
