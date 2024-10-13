@@ -18,7 +18,7 @@ public class TableView extends Canvas {
 		var width = this.getBounds().width;
 		for(int i = 0; i < Tabla.width; i++) {
 			for(int j = 0; j < tabla.length(); j++) {
-				g.drawString(tabla.getString(i, j), coordinate[i]*width/100, j*16);
+				g.drawString(tabla.getString(i, j), coordinate[i]*width/100, (j+1)*getFont().getSize());
 			}
 		}
 	}
