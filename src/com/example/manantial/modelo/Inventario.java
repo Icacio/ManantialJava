@@ -39,7 +39,8 @@ public class Inventario extends Tabla {
 				st.executeUpdate(sql+values);
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("23505"))
-					throw e;
+					abort(e);
+				st.executeUpdate("UPDATE Inventario SET cantidad = "+precio[i]+"WHERE codigo = "+codigo[i]);	
 			}
 		}
 	}
@@ -102,10 +103,10 @@ public class Inventario extends Tabla {
 			} else throw e;
 		}
 		var rs = st.executeQuery("SELECT * FROM Inventario");
-		var codigo = new long[i+1];
-		var nombre = new String[i+1];
-		var precio = new int[i+1];
-		var cantid = new int[i+1];
+		var codigo = new long[i];
+		var nombre = new String[i];
+		var precio = new int[i];
+		var cantid = new int[i];
 		i = 0; 
 		while(rs.next()) {
 			codigo[i] = rs.getLong("codigo");
