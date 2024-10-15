@@ -1,5 +1,7 @@
 package com.example.manantial.modelo;
 
+import com.example.manantial.controlador.Utils;
+
 public class Tabla {
 	
 	protected long[] codigo;
@@ -52,6 +54,35 @@ public class Tabla {
 	public int length() {
 		return length;
 	}
+
+	
+	public void addCantidad(int y, int value) {
+		cantidad[y] +=value;
+	}
+	
+	public void setPrecio(int y, int value) {
+		precio[y] = value;
+	}
+	
+	public void setNombre(int y, String nom) {
+		nombre[y] = nom;
+	}
+
+	public void add(long argument0, int value) {
+		add(argument0,"",0,value);
+	}
+	
+	public void add(long barcode, String productName, int price, int amount) {
+		codigo = Utils.arrayResize(codigo);
+		nombre = Utils.arrayResize(nombre);
+		cantidad = Utils.arrayResize(cantidad);
+		precio = Utils.arrayResize(precio);
+		codigo[length] = barcode;
+		nombre[length] = productName;
+		precio[length] = price;
+		cantidad[length++] = amount;
+	}
+
 	public void save () {
 	}
 }

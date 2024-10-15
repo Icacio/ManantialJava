@@ -46,7 +46,9 @@ public class MainController implements ActionListener {
 		butonera.add(instrucciones);
 		butonera.add(barra);
 		butonera.add(spinner);
+		spinner.addActionListener(this);
 		butonera.add(botonAgregar);
+		botonAgregar.addActionListener(this);
 		butonera.add(botonInventario);
 		butonera.add(pagar);
 		tableDrawn.setPreferredSize(new Dimension(
@@ -76,6 +78,45 @@ public class MainController implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		String string = barra.getText();
+		if (Utils.isNumber(string)) {
+			var codigo = Long.parseLong(string);
+			var amount= spinner.getValue()!=0?spinner.getValue():1;
+			int resultado = -1;
+			for(int i = 0; i < inventario.length();i++)
+			    if (codigo==inventario.getBarcode(i)) //compara el código con todos los datos del arreglo
+			        resultado = i;
+			if (resultado != -1) {//si existe en el inventario
+			    if (caja) {
+			    } else {//y está en la administración
+			    	inventario.addCantidad(resultado,amount);}//lo añade
+		        	spinner.setValue(0);
+		        	barra.setText("");
+			} else {//si no existe en el inventario
+				if (!caja) { //y está en la administración
+					if (!inserting) {//si no está insertando nada
+						inventario.add(codigo,amount);
+						inserting = true;
+						instrucciones.setText(Language.mensaje[1]);
+				        spinner.setValue(0);
+				        barra.setText("");
+						ventana.pack();
+					}
+			    }
+			}
+		} else {//si es texto
+			if (!caja&&inserting) {//si es la administración del inventario Y estamos insertando algo
+				int leng = tableDrawn.length()-1;
+				tableDrawn.tabla.setPrecio(leng,spinner.getValue());
+				tableDrawn.tabla.setNombre(leng,barra.getText());
+				inserting = false;
+				instrucciones.setText(Language.mensaje[0]);
+				ventana.pack();
+		        spinner.setValue(0);
+		        barra.setText("");
+			}
+		}
+		barra.requestFocusInWindow();
 	}
 	
 	public void close() {

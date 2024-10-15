@@ -58,7 +58,7 @@ public class Spinner extends Panel {
 		
 		int setValue(int i) {
 			intValue = i;
-			if (intValue!=0)
+			if (!getText().equals(""))
 				super.setText(Integer.toString(i));
 			return i;
 		}
