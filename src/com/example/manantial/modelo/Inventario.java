@@ -21,30 +21,6 @@ public class Inventario extends Tabla {
 	private Inventario() {
 		getInventario();
 	}
-
-	@Override
-	public void save() {
-		try (var con = getCon(userPlusPass+pass);var st = con.createStatement()) {
-			upsert(st);
-		} catch (SQLException e) {
-			abort(e);
-		}
-	}
-	
-	private void upsert(Statement st) throws SQLException {
-		var sql = "INSERT INTO Inventario (codigo,nombre,precio,cantidad) VALUES ";
-		for (int i = 0; i < length;i++) {
-			var values = "("+codigo[i]+",'"+nombre[i]+"',"+precio[i]+","+cantidad[i]+")";
-			try {
-				st.executeUpdate(sql+values);
-			} catch (SQLException e) {
-				if (!e.getSQLState().equals("23505"))
-					abort(e);
-				st.executeUpdate("UPDATE Inventario SET cantidad = "+precio[i]+"WHERE codigo = "+codigo[i]);	
-			}
-		}
-	}
-
 	private void getInventario() {
 		try (var con = getCon(false);var st = con.createStatement()) {//read the database without password
 			readTable(st);
@@ -120,6 +96,29 @@ public class Inventario extends Tabla {
 		this.precio = precio;
 		this.cantidad = cantid;
 		length = codigo.length;
+	}
+
+	@Override
+	public void save() {
+		try (var con = getCon(userPlusPass+pass);var st = con.createStatement()) {
+			upsert(st);
+		} catch (SQLException e) {
+			abort(e);
+		}
+	}
+	
+	private void upsert(Statement st) throws SQLException {
+		var sql = "INSERT INTO Inventario (codigo,nombre,precio,cantidad) VALUES ";
+		for (int i = 0; i < length;i++) {
+			var values = "("+codigo[i]+",'"+nombre[i]+"',"+precio[i]+","+cantidad[i]+")";
+			try {
+				st.executeUpdate(sql+values);
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("23505"))
+					abort(e);
+				st.executeUpdate("UPDATE Inventario SET cantidad = "+precio[i]+"WHERE codigo = "+codigo[i]);	
+			}
+		}
 	}
 	
 	private void createTable(Statement st,String pass) throws SQLException {

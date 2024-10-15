@@ -5,7 +5,7 @@ import java.awt.Canvas;
 import java.awt.Graphics;
 
 public class TableView extends Canvas {
-	private Tabla tabla;
+	public Tabla tabla;
 	private static final int[] coordinate = {0,25,75,90};
 
 	public TableView(Tabla tabla) {
@@ -21,5 +21,9 @@ public class TableView extends Canvas {
 				g.drawString(tabla.getString(i, j), coordinate[i]*width/100, (j+1)*getFont().getSize());
 			}
 		}
+	}
+
+	public int length() {
+		return tabla.length();
 	}
 }

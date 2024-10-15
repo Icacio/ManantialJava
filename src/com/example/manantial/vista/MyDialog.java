@@ -10,7 +10,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 
 import com.example.manantial.controlador.Utils;
-import static com.example.manantial.vista.Ventana.ventana;
+import static com.example.manantial.controlador.MainController.ventana;
 
 public class MyDialog extends Dialog {
 	public MyDialog (String text, ActionListener b) {

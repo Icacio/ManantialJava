@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import static com.example.manantial.vista.Ventana.ventana;
+import static com.example.manantial.controlador.MainController.ventana;
 
 import com.example.manantial.vista.Language;
 import com.example.manantial.vista.MyDialog;
