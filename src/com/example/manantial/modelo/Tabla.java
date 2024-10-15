@@ -55,6 +55,9 @@ public class Tabla {
 		return length;
 	}
 
+	public void setCantidad(int y, int value) {
+		cantidad[y] = value;
+	}
 	
 	public void addCantidad(int y, int value) {
 		cantidad[y] +=value;

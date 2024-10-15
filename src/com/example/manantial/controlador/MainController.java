@@ -94,7 +94,23 @@ public class MainController implements ActionListener {
 					resultado = i;
 			if (resultado != -1) {//si existe en el inventario
 				if (caja) {
-					
+					//y está en la caja
+					int cajaIndex = -1;
+					for (int j = 0; j < tableDrawn.length(); j++) {
+						if (codigo==tableDrawn.tabla.getBarcode(j)) {
+							cajaIndex = j;//compara el código con todos los datos de la venta actual
+						}
+					}
+					if (cajaIndex != -1) {//si existe en la caja
+						if (amount+tableDrawn.tabla.getCantidad(cajaIndex)>inventario.getCantidad(resultado)) {
+							tableDrawn.tabla.setCantidad(cajaIndex,inventario.getCantidad(resultado));
+							new MyDialog(Language.notEnough);
+						}
+						else
+							tableDrawn.tabla.addCantidad(cajaIndex,amount);//lo suma
+					} else {//si no lo agrega
+						tableDrawn.tabla.add(codigo,inventario.getString(1,resultado),inventario.getPrecio(resultado),amount);
+					}
 				} else {//y está en la administración
 					inventario.addCantidad(resultado,amount);//lo suma
 				}
