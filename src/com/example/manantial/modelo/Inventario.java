@@ -17,9 +17,12 @@ public class Inventario extends Tabla {
 	public static final Inventario singleton = new Inventario();
 	private static final String userPlusPass = ";user=root;password=";
 	private String pass;
+	private static boolean ran = false;
 	
 	private Inventario () {}
 	public void getInventario() {
+		if (ran) return;
+		ran = true;
 		try (var con = getCon(false);var st = con.createStatement()) {//read the database without password
 			readTable(st);
 		} catch (SQLException e) {

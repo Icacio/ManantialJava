@@ -12,11 +12,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import static com.example.manantial.controlador.MainController.ventana;
+
 public class PasswordGetter extends Dialog implements ActionListener, WindowListener {
 	private Label instruccion;
 	private TextField confirmPassword = new TextField();
 	private TextField password = new TextField();
-	public String response;
+	public String response = null;
 	private boolean creatingPassword;
 	
 	public PasswordGetter(boolean doWeCreatePassword) {
@@ -88,7 +90,10 @@ public class PasswordGetter extends Dialog implements ActionListener, WindowList
 	}
 	@Override
 	public void windowClosing(WindowEvent e) {
-		System.exit(0);
+		if (ventana.isVisible())
+			dispose();
+		else
+			System.exit(0);
 	}
 
 	@Override
