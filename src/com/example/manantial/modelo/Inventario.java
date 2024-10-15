@@ -18,10 +18,8 @@ public class Inventario extends Tabla {
 	private static final String userPlusPass = ";user=root;password=";
 	private String pass;
 	
-	private Inventario() {
-		getInventario();
-	}
-	private void getInventario() {
+	private Inventario () {}
+	public void getInventario() {
 		try (var con = getCon(false);var st = con.createStatement()) {//read the database without password
 			readTable(st);
 		} catch (SQLException e) {
@@ -31,6 +29,7 @@ public class Inventario extends Tabla {
 				try (var con = getCon(true);var st = con.createStatement()) {
 					con.setSchema("APP");
 					createTable(st,pass);
+					MainController.caja = false;
 					return;
 				} catch (SQLException e1) {
 					abort(e1);
@@ -78,23 +77,26 @@ public class Inventario extends Tabla {
 				return;
 			} else throw e;
 		}
-		var rs = st.executeQuery("SELECT * FROM Inventario");
-		var codigo = new long[i];
-		var nombre = new String[i];
-		var precio = new int[i];
-		var cantid = new int[i];
-		i = 0; 
-		while(rs.next()) {
-			codigo[i] = rs.getLong("codigo");
-			nombre[i] = rs.getString("nombre");
-			precio[i] = rs.getInt("precio");
-			cantid[i++] = rs.getInt("cantidad");
-		}
-		rs.close();
-		this.codigo = codigo;
-		this.nombre = nombre;
-		this.precio = precio;
-		this.cantidad = cantid;
+		if (i > 0) {
+			MainController.caja = true;
+			var rs = st.executeQuery("SELECT * FROM Inventario");
+			var codigo = new long[i];
+			var nombre = new String[i];
+			var precio = new int[i];
+			var cantid = new int[i];
+			i = 0; 
+			while(rs.next()) {
+				codigo[i] = rs.getLong("codigo");
+				nombre[i] = rs.getString("nombre");
+				precio[i] = rs.getInt("precio");
+				cantid[i++] = rs.getInt("cantidad");
+			}
+			this.codigo = codigo;
+			this.nombre = nombre;
+			this.precio = precio;
+			this.cantidad = cantid;
+			rs.close();
+		} else MainController.caja = false;
 		length = codigo.length;
 	}
 

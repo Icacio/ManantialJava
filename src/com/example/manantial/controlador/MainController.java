@@ -31,7 +31,7 @@ public class MainController implements ActionListener {
 	public final Label instrucciones = new Label(Language.mensaje[0]);
 	public final Button pagar = new Button(Language.pay+"0    ");
 	public final ScrollPane center = new ScrollPane();
-	public static boolean caja = inventario.length()>0;
+	public static boolean caja;
 	private boolean inserting = false;
 	
 	public static void main (String args[]) {
