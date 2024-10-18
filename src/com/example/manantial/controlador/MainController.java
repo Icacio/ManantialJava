@@ -61,7 +61,7 @@ public class MainController implements ActionListener {
 				tableDrawn.getPreferredSize().width,
 				tableDrawn.length()*ventana.getFont().getSize()));
 		if (caja) {
-			tableDrawn.tabla = venta();
+			tableDrawn.setTabla(venta());
 		} else {
 			pagar.setVisible(false);
 			botonInventario.setVisible(false);
@@ -97,26 +97,25 @@ public class MainController implements ActionListener {
 					//y está en la caja
 					int cajaIndex = -1;
 					for (int j = 0; j < tableDrawn.length(); j++) {
-						if (codigo==tableDrawn.tabla.getBarcode(j)) {
+						if (codigo==tableDrawn.getTabla().getBarcode(j)) {
 							cajaIndex = j;//compara el código con todos los datos de la venta actual
 						}
 					}
 					if (cajaIndex != -1) {//si existe en la caja
-						if (amount+tableDrawn.tabla.getCantidad(cajaIndex)>inventario.getCantidad(resultado)) {
-							tableDrawn.tabla.setCantidad(cajaIndex,inventario.getCantidad(resultado));
+						if (amount+tableDrawn.getTabla().getCantidad(cajaIndex)>inventario.getCantidad(resultado)) {
+							tableDrawn.setCantidad(cajaIndex,inventario.getCantidad(resultado));
 							new MyDialog(Language.notEnough);
 						}
 						else
-							tableDrawn.tabla.addCantidad(cajaIndex,amount);//lo suma
+							tableDrawn.addCantidad(cajaIndex,amount);//lo suma
 					} else {//si no lo agrega
-						tableDrawn.tabla.add(codigo,inventario.getString(1,resultado),inventario.getPrecio(resultado),amount);
+						tableDrawn.add(codigo,inventario.getString(1,resultado),inventario.getPrecio(resultado),amount);
 					}
 				} else {//y está en la administración
-					inventario.addCantidad(resultado,amount);//lo suma
+					tableDrawn.addCantidad(resultado,amount);//lo suma
 				}
 				spinner.setValue(0);
 				barra.setText("");
-				tableDrawn.repaint();
 			} else {//si no existe en el inventario
 				if (!caja) { //y está en la administración
 					if (!inserting) {//si no está insertando nada
@@ -132,8 +131,8 @@ public class MainController implements ActionListener {
 		} else {//si es texto
 			if (!caja&&inserting) {//si es la administración del inventario Y estamos insertando algo
 				int leng = tableDrawn.length()-1;
-				tableDrawn.tabla.setPrecio(leng,spinner.getValue());
-				tableDrawn.tabla.setNombre(leng,barra.getText());
+				tableDrawn.setPrecio(leng,spinner.getValue());
+				tableDrawn.setNombre(leng,barra.getText());
 				inserting = false;
 				instrucciones.setText(Language.mensaje[0]);
 				spinner.setValue(0);
@@ -145,7 +144,7 @@ public class MainController implements ActionListener {
 	}
 	
 	public void close() {
-		tableDrawn.tabla.save();
+		tableDrawn.getTabla().save();
 		if (caja)
 			inventario.save();
 	}
@@ -156,11 +155,11 @@ public class MainController implements ActionListener {
 				return;
 			else {
 				pagar.setVisible(false);
-				tableDrawn.tabla = inventario;
+				tableDrawn.setTabla(inventario);
 			}
 		} else {
 				pagar.setVisible(true);
-				tableDrawn.tabla = venta();
+				tableDrawn.setTabla(venta());
 		}
 		caja = !caja;
 		var index = caja?0:1;
