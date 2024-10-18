@@ -17,7 +17,7 @@ import com.example.manantial.modelo.Tabla;
 import com.example.manantial.vista.Language;
 import com.example.manantial.vista.MyDialog;
 import com.example.manantial.vista.PasswordGetter;
-import com.example.manantial.vista.TableView;
+import com.example.manantial.vista.components.TableView;
 import com.example.manantial.vista.Ventana;
 import com.example.manantial.vista.components.SearchBox;
 import com.example.manantial.vista.components.Spinner;

@@ -1,4 +1,4 @@
-package com.example.manantial.vista;
+package com.example.manantial.vista.components;
 
 import com.example.manantial.modelo.Tabla;
 import java.awt.Canvas;
