@@ -112,7 +112,7 @@ public class Inventario extends Tabla {
 	public void save() {
 		try (var con = getCon(userPlusPass+pass);var st = con.prepareStatement("INSERT INTO Inventario (codigo,nombre,precio,cantidad) VALUES (?,?,?,?)")) {
 			for (int i = 0; i < length;i++) {
-				if (!changed[i]) break;
+				if (!changed[i]) continue;
 				st.setLong(1,codigo[i]);
 				st.setString(2,nombre[i]);
 				st.setInt(3,precio[i]);
