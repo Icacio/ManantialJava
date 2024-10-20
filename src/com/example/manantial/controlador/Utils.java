@@ -75,4 +75,10 @@ public final class Utils extends WindowAdapter implements ActionListener {
 		array = null;
 		return newArray;
 	}
+
+	public static boolean[] arrayResize(boolean[] array) {
+		var newArray = new boolean[array.length+2];
+		System.arraycopy(array, 0, newArray, 0, array.length);
+		return newArray;
+	}
 }

@@ -8,6 +8,7 @@ public class Tabla {
 	protected int[] cantidad;
 	protected int[] precio;
 	protected String[] nombre;
+	protected boolean[] changed;
 	protected int length;
 	public static final int width = 4;
 	//constructors
@@ -16,6 +17,7 @@ public class Tabla {
 		nombre = new String[1];
 		precio = new int[1];
 		cantidad = new int[1];
+		changed = new boolean[1];
 		length = 0;
 	}
 	public Tabla(long[] codigo2, String[] nombre2, int[] precio2, int[] cantid2) {
@@ -57,22 +59,26 @@ public class Tabla {
 
 	public void setCantidad(int y, int value) {
 		cantidad[y] = value;
+		changed[y] = true;
 	}
 	
 	public void addCantidad(int y, int value) {
 		cantidad[y] +=value;
+		changed[y] = true;
 	}
 	
 	public void setPrecio(int y, int value) {
 		precio[y] = value;
+		changed[y] = true;
 	}
 	
 	public void setNombre(int y, String nom) {
 		nombre[y] = nom;
+		changed[y] = true;
 	}
 
-	public void add(long argument0, int value) {
-		add(argument0,"",0,value);
+	public void add(long code, int amount) {
+		add(code,"",0,amount);
 	}
 	
 	public void add(long barcode, String productName, int price, int amount) {
@@ -80,6 +86,8 @@ public class Tabla {
 		nombre = Utils.arrayResize(nombre);
 		cantidad = Utils.arrayResize(cantidad);
 		precio = Utils.arrayResize(precio);
+		changed = Utils.arrayResize(changed);
+		changed[length] = true;
 		codigo[length] = barcode;
 		nombre[length] = productName;
 		precio[length] = price;
