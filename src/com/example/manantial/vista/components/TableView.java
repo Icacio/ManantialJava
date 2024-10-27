@@ -1,6 +1,8 @@
 package com.example.manantial.vista.components;
 
 import com.example.manantial.modelo.Tabla;
+import com.example.manantial.vista.Language;
+
 import java.awt.Canvas;
 import java.awt.Graphics;
 
@@ -16,9 +18,14 @@ public class TableView extends Canvas {
 	@Override
 	public void paint(Graphics g) {
 		var width = this.getBounds().width;
+		var heigh = getFont().getSize();
+		g.drawString(Language.columnName[0],coordinate[0]*width/100,heigh);
+		g.drawString(Language.columnName[1],coordinate[1]*width/100,heigh);
+		g.drawString(Language.columnName[2],coordinate[2]*width/100,heigh);
+		g.drawString(Language.columnName[3],coordinate[3]*width/100,heigh);
 		for(int i = 0; i < Tabla.width; i++) {
 			for(int j = 0; j < tabla.length(); j++) {
-				g.drawString(tabla.getString(i, j), coordinate[i]*width/100, (j+1)*getFont().getSize());
+				g.drawString(tabla.getString(i, j), coordinate[i]*width/100, (j+2)*getFont().getSize());
 			}
 		}
 	}

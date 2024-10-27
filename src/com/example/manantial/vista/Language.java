@@ -11,4 +11,5 @@ public class Language {
 	public static final String notEnough = "Inventario insuficiente";
 	public static final String pay = "Pagar: $";
 	public static final String libraryError = "Ha ocurrido un error con la base de datos, asegúrate de tener las librerias adecuadas y que no haya otra instancia del programa corriendo.";
+	public static final String[] columnName = {"Código", "Nombre", "Precio", "Cantidad"};
 }

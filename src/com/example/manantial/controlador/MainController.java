@@ -2,7 +2,6 @@ package com.example.manantial.controlador;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Label;
 import java.awt.Panel;
@@ -42,6 +41,7 @@ public class MainController implements ActionListener {
 		inventario.getInventario();
 		tableController.configureVentana();
 	}
+	
 	private void configureVentana() {
 		ventana.setTitle(Language.views[caja?1:0]);
 		ventana.addWindowListener(ventana);
@@ -57,9 +57,9 @@ public class MainController implements ActionListener {
 		butonera.add(pagar);
 		butonera.add(botonInventario);
 		botonInventario.addActionListener(this::changeView);
-		tableDrawn.setPreferredSize(new Dimension(
-				tableDrawn.getPreferredSize().width,
-				tableDrawn.length()*ventana.getFont().getSize()));
+		var d = tableDrawn.getPreferredSize();
+		d.height = (tableDrawn.length()+1)*ventana.getFont().getSize();
+		tableDrawn.setPreferredSize(d);
 		if (caja) {
 			tableDrawn.setTabla(venta());
 		} else {
@@ -124,7 +124,6 @@ public class MainController implements ActionListener {
 						instrucciones.setText(Language.mensaje[1]);
 						spinner.setValue(0);
 						barra.setText("");
-						tableDrawn.repaint();
 					}
 				}
 			}
@@ -137,6 +136,10 @@ public class MainController implements ActionListener {
 				instrucciones.setText(Language.mensaje[0]);
 				spinner.setValue(0);
 				barra.setText("");
+				var d = tableDrawn.getPreferredSize();
+				d.height = (tableDrawn.length()+1)*tableDrawn.getFont().getSize();
+				tableDrawn.setPreferredSize(d);
+				tableDrawn.revalidate();
 				tableDrawn.repaint();
 			}
 		}
