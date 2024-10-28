@@ -1,6 +1,9 @@
 package com.example.manantial.modelo;
 
 import com.example.manantial.controlador.Utils;
+import static com.example.manantial.controlador.MainController.tableController;
+
+import com.example.manantial.controlador.Debug;
 
 public class Tabla {
 	
@@ -9,10 +12,12 @@ public class Tabla {
 	protected int[] precio;
 	protected String[] nombre;
 	protected boolean[] changed;
+	protected final String tableName;
 	protected int length;
 	public static final int width = 4;
 	//constructors
-	public Tabla() {
+	public Tabla(String name) {
+		tableName = name;
 		codigo = new long[1];
 		nombre = new String[1];
 		precio = new int[1];
@@ -20,14 +25,25 @@ public class Tabla {
 		changed = new boolean[1];
 		length = 0;
 	}
-	public Tabla(long[] codigo2, String[] nombre2, int[] precio2, int[] cantid2) {
+	
+	public Tabla(String name, long[] codigo2, String[] nombre2, int[] precio2, int[] cantid2) {
+		tableName = name;
 		codigo = codigo2;
 		nombre = nombre2;
 		precio = precio2;
 		cantidad = cantid2;
 		length = codigo.length;
+		changed = fillBool(false,length);
 	}
 	
+	protected boolean[] fillBool(boolean b, int leng) {
+		var bool = new boolean[leng];
+		for (int i = 0; i < leng; i++) {
+			bool[i] = b;
+		}
+		return bool;
+	}
+
 	public long getBarcode(int y) {
 		return codigo[y];
 	}
@@ -94,6 +110,24 @@ public class Tabla {
 		cantidad[length++] = amount;
 	}
 
+	public Tabla suma (Tabla tabla) {
+		Tabla thisTabla = this;
+		for(int i = 0; i < tabla.length;i++) {
+			int result = 0;
+			for(int j = 0;j < length; j++) {
+				if (tabla.getBarcode(i)==thisTabla.getBarcode(j)) {
+					addCantidad(j,tabla.getCantidad(i));
+					result++;
+				}
+			}
+			if (result<1) {
+				add(tabla.getBarcode(i),tabla.getString(1,i),tabla.getPrecio(i),tabla.getCantidad(i));
+			}
+		}
+		return this;
+	}
+	
 	public void save () {
+		tableController.write(this,tableName);
 	}
 }

@@ -20,7 +20,10 @@ public class Inventario extends Tabla {
 	private String pass;
 	private static boolean ran = false;
 	
-	private Inventario () {}
+	private Inventario () {
+		super("Inventario");
+	}
+	
 	public void getInventario() {
 		if (ran) return;
 		ran = true;

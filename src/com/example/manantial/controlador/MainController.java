@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import com.example.manantial.modelo.Inventario;
 import com.example.manantial.modelo.Tabla;
@@ -20,6 +21,8 @@ import com.example.manantial.vista.components.TableView;
 import com.example.manantial.vista.Ventana;
 import com.example.manantial.vista.components.SearchBox;
 import com.example.manantial.vista.components.Spinner;
+
+import static com.example.manantial.controlador.FileController.fc;
 
 public class MainController implements ActionListener {
 	
@@ -55,6 +58,7 @@ public class MainController implements ActionListener {
 		butonera.add(botonAgregar);
 		botonAgregar.addActionListener(this);
 		butonera.add(pagar);
+		pagar.addActionListener(this::pagar);
 		butonera.add(botonInventario);
 		botonInventario.addActionListener(this::changeView);
 		var d = tableDrawn.getPreferredSize();
@@ -93,8 +97,7 @@ public class MainController implements ActionListener {
 				if (codigo==inventario.getBarcode(i)) //compara el código con todos los datos del arreglo
 					resultado = i;
 			if (resultado != -1) {//si existe en el inventario
-				if (caja) {
-					//y está en la caja
+				if (caja) {//y está en la caja
 					int cajaIndex = -1;
 					for (int j = 0; j < tableDrawn.length(); j++) {
 						if (codigo==tableDrawn.getTabla().getBarcode(j)) {
@@ -108,9 +111,16 @@ public class MainController implements ActionListener {
 						}
 						else
 							tableDrawn.addCantidad(cajaIndex,amount);//lo suma
-					} else {//si no lo agrega
+					} else {//no lo agrega
 						tableDrawn.add(codigo,inventario.getString(1,resultado),inventario.getPrecio(resultado),amount);
 					}
+					var height = tableDrawn.length();
+					int suma = 0;
+					for (int i = 0; i < height; i++) {
+						suma += (tableDrawn.getTabla().getCantidad(i)*tableDrawn.getTabla().getPrecio(i));
+					}
+					pagar.setLabel(Language.pay+suma);
+					
 				} else {//y está en la administración
 					tableDrawn.addCantidad(resultado,amount);//lo suma
 				}
@@ -173,7 +183,7 @@ public class MainController implements ActionListener {
 	}
 	
 	private Tabla venta() {
-		return new Tabla();
+		return new Tabla("venta");
 	}
 	
 	private boolean validatePassword() {
@@ -193,5 +203,21 @@ public class MainController implements ActionListener {
 		return false;
 	}
 
+	private void pagar(ActionEvent e) {
+		today().suma(tableDrawn.getTabla()).save();
+	}
+	
+	private Tabla today() {
+		var date = LocalDate.now();
+		var tableName = date.getYear()+"\\"+date.getMonthValue()+"\\"+date.getDayOfMonth()+".csv";
+		var fileName = working_dir+tableName;
+		return fc.read(fileName,tableName);
+	}
+
 	private MainController() {}
+
+	public void write(Tabla tabla, String tableName) {
+		var fileName = working_dir+tableName;
+		fc.write(tabla,fileName);
+	}
 }
