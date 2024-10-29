@@ -96,16 +96,12 @@ public class Tabla {
 	}
 	
 	public void add(long barcode, String productName, int price, int amount) {
-		codigo = Utils.arrayResize(codigo);
-		nombre = Utils.arrayResize(nombre);
-		cantidad = Utils.arrayResize(cantidad);
-		precio = Utils.arrayResize(precio);
-		changed = Utils.arrayResize(changed);
-		changed[length] = true;
-		codigo[length] = barcode;
-		nombre[length] = productName;
-		precio[length] = price;
-		cantidad[length++] = amount;
+		codigo = Utils.arrayAdd(codigo,barcode);
+		nombre = Utils.arrayAdd(nombre,productName);
+		cantidad = Utils.arrayAdd(cantidad,amount);
+		precio = Utils.arrayAdd(precio,price);
+		changed = Utils.arrayAdd(changed,true);
+		length++;
 	}
 
 	public Tabla suma (Tabla tabla) {

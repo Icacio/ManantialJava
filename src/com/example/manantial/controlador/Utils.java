@@ -47,38 +47,34 @@ public final class Utils extends WindowAdapter implements ActionListener {
 	}
 
 	public static boolean isNumber(String t) {
-		try {
-			Long.parseLong(t);
-			return true;
-		} catch (NumberFormatException e) {
-			return false;
-		}
+		return t.matches("[0-9]+|[0-9]+.[0-9]*");
 	}
 
-	public static String [] arrayResize(String[] array) {
-		var newArray = new String[array.length+2];
+	public static String [] arrayAdd(String[] array, String value) {
+		var newArray = new String[array.length+1];
 		System.arraycopy(array, 0, newArray, 0, array.length);
-		array = null;
+		newArray[newArray.length-1] = value;
 		return newArray;
 	}
 	
-	public static long[] arrayResize(long[] array) {
-		long[] newArray = new long[array.length+2];
+	public static long[] arrayAdd(long[] array, long value) {
+		long[] newArray = new long[array.length+1];
 		System.arraycopy(array, 0, newArray, 0, array.length);
-		array = null;
+		newArray[newArray.length-1] = value;
 		return newArray;
 	}
 	
-	public static int[] arrayResize(int[] array) {
+	public static int[] arrayAdd(int[] array, int value) {
 		var newArray = new int[array.length+2];
 		System.arraycopy(array, 0, newArray, 0, array.length);
-		array = null;
+		newArray[newArray.length-1] = value;
 		return newArray;
 	}
 
-	public static boolean[] arrayResize(boolean[] array) {
+	public static boolean[] arrayAdd(boolean[] array, boolean value) {
 		var newArray = new boolean[array.length+2];
 		System.arraycopy(array, 0, newArray, 0, array.length);
+		newArray[newArray.length-1] = value;
 		return newArray;
 	}
 }
