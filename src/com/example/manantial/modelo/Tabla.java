@@ -3,8 +3,6 @@ package com.example.manantial.modelo;
 import com.example.manantial.controlador.Utils;
 import static com.example.manantial.controlador.MainController.tableController;
 
-import com.example.manantial.controlador.Debug;
-
 public class Tabla {
 	
 	protected long[] codigo;
