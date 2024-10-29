@@ -48,7 +48,7 @@ public final class Utils extends WindowAdapter implements ActionListener {
 
 	public static boolean isNumber(String t) {
 		try {
-			Integer.parseInt(t);
+			Long.parseLong(t);
 			return true;
 		} catch (NumberFormatException e) {
 			return false;
