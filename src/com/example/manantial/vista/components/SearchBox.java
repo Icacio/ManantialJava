@@ -1,6 +1,7 @@
 package com.example.manantial.vista.components;
 
 import java.awt.TextField;
+import java.util.Hashtable;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.List;
@@ -8,7 +9,9 @@ import java.awt.Panel;
 import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.awt.event.TextListener;
+import java.awt.event.ItemListener;
 import java.awt.event.TextEvent;
+import java.awt.event.ItemEvent;
 import java.awt.event.ActionEvent;
 
 import com.example.manantial.controlador.Utils;
@@ -17,9 +20,10 @@ import static com.example.manantial.controlador.MainController.inventario;
 import static com.example.manantial.controlador.MainController.tableController;
 import static com.example.manantial.controlador.MainController.ventana;
 
-public class SearchBox extends TextField implements ActionListener, TextListener
+public class SearchBox extends TextField implements ActionListener, TextListener, ItemListener
 	{
 	private Window tooltip;
+	private Hashtable<String,String> table = new Hashtable<String, String>();
 	public List[] results = new List[3];
 
 	public SearchBox (int i) {
@@ -43,10 +47,11 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 			int length = inventario.length();
 			for (int i = 0; i < length;i++) {
 				String a = inventario.getString(1,i);
-				if (a.contains(getText())) {
+				if (a.contains(texto)) {
 					coincidence[0] = Utils.arrayAdd(coincidence[0],inventario.getString(1,i));
 					coincidence[1] = Utils.arrayAdd(coincidence[1],inventario.getString(2,i));
 					coincidence[2] = Utils.arrayAdd(coincidence[2],inventario.getString(3,i));
+					table.put(inventario.getString(1,i),inventario.getString(0,i));
 					coincidences++;
 				}
 			}
@@ -56,6 +61,7 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 				for (int i= 0; i < 3;i++) {
 					results[i] = new List(coincidences);
 					results[i].setFont(getFont());
+					results[i].addItemListener(this);
 				}
 				tooltip.add(results[0]);
 				Panel right = new Panel(new GridLayout(0,2));
@@ -74,6 +80,14 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 			}
 		} else {
 			disposeWindow();
+		}
+	}
+	
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		var selected = ((List)e.getSource()).getSelectedIndex();
+		if (selected!=-1) {
+			setText(table.get(results[0].getItem(selected)));
 		}
 	}
 	
