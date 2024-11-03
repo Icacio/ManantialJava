@@ -16,11 +16,11 @@ public class Tabla {
 	//constructors
 	public Tabla(String name) {
 		tableName = name;
-		codigo = new long[1];
-		nombre = new String[1];
-		precio = new int[1];
-		cantidad = new int[1];
-		changed = new boolean[1];
+		codigo = new long[0];
+		nombre = new String[0];
+		precio = new int[0];
+		cantidad = new int[0];
+		changed = new boolean[0];
 		length = 0;
 	}
 	
