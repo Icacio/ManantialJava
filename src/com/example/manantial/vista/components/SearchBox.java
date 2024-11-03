@@ -10,9 +10,11 @@ import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.awt.event.TextListener;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
 import java.awt.event.TextEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 import com.example.manantial.controlador.Utils;
 
@@ -20,7 +22,7 @@ import static com.example.manantial.controlador.MainController.inventario;
 import static com.example.manantial.controlador.MainController.tableController;
 import static com.example.manantial.controlador.MainController.ventana;
 
-public class SearchBox extends TextField implements ActionListener, TextListener, ItemListener
+public class SearchBox extends TextField implements ActionListener, TextListener, ItemListener, KeyListener
 	{
 	private Window tooltip;
 	private Hashtable<String,String> table = new Hashtable<String, String>();
@@ -30,11 +32,17 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 		super(null,i);
 		addActionListener(this);
 		addTextListener(this);
+		addKeyListener(this);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (Utils.isNumber(getText())) 
 			tableController.actionPerformed(e);
+		else {
+			var sel = results[0].getSelectedItem();
+			if (sel!=null)
+				setText(table.get(sel));
+		}
 	}
 	
 	@Override
@@ -109,4 +117,20 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 			tooltip.removeAll();
 		}
 	}
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (results[0]==null) return;
+		int index;
+		if (e.getKeyCode()==KeyEvent.VK_DOWN) {
+			index = results[0].getSelectedIndex()+1;
+		} else if(e.getKeyCode()==KeyEvent.VK_UP) {
+			index = results[0].getSelectedIndex()-1;
+		} else return;
+		results[0].select(index);
+		results[1].select(index);
+		results[2].select(index);
+	}
+	
+	public void keyTyped(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {}
 }
