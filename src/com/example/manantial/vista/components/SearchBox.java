@@ -11,12 +11,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.TextListener;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
+import java.awt.event.FocusListener;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.TextEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.FocusEvent;
 
 import com.example.manantial.controlador.Utils;
 
@@ -25,10 +27,11 @@ import static com.example.manantial.controlador.MainController.tableController;
 import static com.example.manantial.controlador.MainController.ventana;
 
 public class SearchBox extends TextField implements ActionListener, TextListener, ItemListener, KeyListener
+	, FocusListener
 	, ComponentListener {
 
 	private Window tooltip;
-	private Hashtable<String,String> table = new Hashtable<String, String>();
+	private Hashtable<String,String> table;
 	public List[] results = new List[3];
 
 	public SearchBox (int i) {
@@ -36,6 +39,7 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 		addActionListener(this);
 		addTextListener(this);
 		addKeyListener(this);
+		addFocusListener(this);
 	}
 	
 	@Override
@@ -129,6 +133,20 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 	}
 
 	@Override
+	public void focusGained(FocusEvent e) {
+		window();
+		table = new Hashtable<String, String>();
+		results = new List[3];
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		tooltip.dispose();
+		results = null;
+		table = null;
+	}
+	
+	@Override
 	public void componentMoved(ComponentEvent e) {
 		if (Utils.getWindow(this).isVisible()) {
 			java.awt.Point location = getLocationOnScreen();
@@ -138,6 +156,7 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if (results == null) return;
 		if (results[0]==null) return;
 		int index;
 		if (e.getKeyCode()==KeyEvent.VK_DOWN) {
