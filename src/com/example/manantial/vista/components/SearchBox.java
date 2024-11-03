@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.TextListener;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
+import java.awt.event.ComponentListener;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.TextEvent;
 import java.awt.event.ItemEvent;
@@ -23,7 +25,8 @@ import static com.example.manantial.controlador.MainController.tableController;
 import static com.example.manantial.controlador.MainController.ventana;
 
 public class SearchBox extends TextField implements ActionListener, TextListener, ItemListener, KeyListener
-	{
+	, ComponentListener {
+
 	private Window tooltip;
 	private Hashtable<String,String> table = new Hashtable<String, String>();
 	public List[] results = new List[3];
@@ -34,6 +37,13 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 		addTextListener(this);
 		addKeyListener(this);
 	}
+	
+	@Override
+	public void addNotify() {
+		super.addNotify();
+		Utils.getWindow(this).addComponentListener(this);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (Utils.isNumber(getText())) 
@@ -117,6 +127,15 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 			tooltip.removeAll();
 		}
 	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		if (Utils.getWindow(this).isVisible()) {
+			java.awt.Point location = getLocationOnScreen();
+			window().setLocation(location.x, location.y + getBounds().height);
+		}
+	}
+
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (results[0]==null) return;
@@ -131,6 +150,9 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 		results[2].select(index);
 	}
 	
+	public void componentResized(ComponentEvent e) {}
+	public void componentShown(ComponentEvent e) {}
+	public void componentHidden(ComponentEvent e) {}
 	public void keyTyped(KeyEvent e) {}
 	public void keyReleased(KeyEvent e) {}
 }
