@@ -27,7 +27,7 @@ import static com.example.manantial.controlador.FileController.fc;
 public class MainController implements ActionListener {
 	
 	public static final Ventana ventana = Ventana.singleton;
-	public final static String working_dir = System.getProperty("os.name").toLowerCase().contains("win")?System.getenv("APPDATA")+"\\Manantial\\":"\\";
+	public final static String working_dir = System.getProperty("os.name").toLowerCase().contains("win")?System.getenv("APPDATA")+"\\Manantial\\":System.getProperty("file.separator");
 	public static final Inventario inventario = Inventario.singleton;
 	public static final MainController tableController = new MainController();
 	public final TableView tableDrawn = new TableView(inventario);
@@ -35,7 +35,8 @@ public class MainController implements ActionListener {
 	public final Spinner spinner = new Spinner();
 	public final Button botonInventario = new Button(Language.views[caja?1:0]);
 	public final Label instrucciones = new Label(Language.mensaje[0]);
-	public final Button pagar = new Button(Language.pay+"0    ");
+	static final String initialPayMessage = Language.pay+"0    ";
+	public final Button pagar = new Button(initialPayMessage);
 	public final ScrollPane center = new ScrollPane();
 	public static boolean caja;
 	private boolean inserting = false;
@@ -205,11 +206,14 @@ public class MainController implements ActionListener {
 
 	private void pagar(ActionEvent e) {
 		today().suma(tableDrawn.getTabla()).save();
+		inventario.resta(tableDrawn.getTabla());
+		tableDrawn.setTabla(venta());
+		pagar.setLabel(initialPayMessage);
 	}
 	
 	private Tabla today() {
 		var date = LocalDate.now();
-		var tableName = date.getYear()+"\\"+date.getMonthValue()+"\\"+date.getDayOfMonth()+".csv";
+		var tableName = date.getYear()+System.getProperty("file.separator")+date.getMonthValue()+System.getProperty("file.separator")+date.getDayOfMonth()+".csv";
 		var fileName = working_dir+tableName;
 		return fc.read(fileName,tableName);
 	}

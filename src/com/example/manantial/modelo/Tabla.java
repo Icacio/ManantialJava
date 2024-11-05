@@ -120,6 +120,28 @@ public class Tabla {
 		}
 		return this;
 	}
+
+	public void resta(Tabla tabla) {
+		for(int i = 0; i < tabla.length;i++) {
+			int result = 0;
+			for (int j = 0; j < length; j++) {
+				if (tabla.getBarcode(i)==getBarcode(j)) {
+					setCantidad(j,getCantidad(j)-tabla.getCantidad(i));
+					result++;
+				}
+			}
+			if (result<1) {
+				System.out.println("Artículo no se encuentra:"+tabla.getString(1,i));
+				suma(
+					new Tabla(
+						null,
+						new long[] {getBarcode(i)},
+						new String[] {getString(1,i)},
+						new int[] {getPrecio(i)},
+						new int[] {-getCantidad(i)}));
+			}
+		}
+	}
 	
 	public void save () {
 		tableController.write(this,tableName);

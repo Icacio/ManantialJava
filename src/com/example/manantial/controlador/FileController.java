@@ -2,6 +2,7 @@ package com.example.manantial.controlador;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import com.example.manantial.modelo.Tabla;
+import static com.example.manantial.controlador.MainController.working_dir;
 
 public class FileController {
 	public static FileController fc = new FileController();
@@ -55,6 +57,17 @@ public class FileController {
 	}
 	
 	void write(Tabla tabla, String tableName) {
+		var sep = System.getProperty("file.separator");
+		if (tableName.contains(sep)) {
+			var charSep = sep.charAt(0);
+			var s = working_dir.length();
+			for(int i = s; i < tableName.length();i++) {
+				if (tableName.charAt(i)==charSep && i > 0) {
+					new File(tableName.substring(0,i)).mkdirs();
+					s = i+sep.length();
+				}
+			}
+		}
 		try (var bw = new BufferedWriter(new FileWriter(tableName))) {
 			var length = tabla.length();
 			for(int i = 0; i < length; i++) {
