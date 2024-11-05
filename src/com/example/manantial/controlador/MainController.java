@@ -99,6 +99,11 @@ public class MainController implements ActionListener {
 					resultado = i;
 			if (resultado != -1) {//si existe en el inventario
 				if (caja) {//y está en la caja
+					if (inventario.getCantidad(resultado)<1) {
+						new MyDialog(Language.notEnough);
+						return;
+					}
+					
 					int cajaIndex = -1;
 					for (int j = 0; j < tableDrawn.length(); j++) {
 						if (codigo==tableDrawn.getTabla().getBarcode(j)) {
@@ -107,7 +112,6 @@ public class MainController implements ActionListener {
 					}
 					if (cajaIndex != -1) {//si existe en la caja
 						if (amount+tableDrawn.getTabla().getCantidad(cajaIndex)>inventario.getCantidad(resultado)) {
-							tableDrawn.setCantidad(cajaIndex,inventario.getCantidad(resultado));
 							new MyDialog(Language.notEnough);
 						}
 						else
