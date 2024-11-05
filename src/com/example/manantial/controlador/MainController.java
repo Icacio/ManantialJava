@@ -189,7 +189,12 @@ public class MainController implements ActionListener {
 	}
 	
 	private Tabla venta() {
-		return fc.read(working_dir+"venta","venta");
+		var venta = fc.read(working_dir+"venta","venta");
+		var suma = 0;
+		for (int i = 0; i < venta.length();i++)
+			suma += (venta.getCantidad(i)*venta.getPrecio(i));
+		pagar.setLabel(Language.pay+suma);
+		return venta;
 	}
 	
 	private boolean validatePassword() {
