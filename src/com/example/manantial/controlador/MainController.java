@@ -62,9 +62,7 @@ public class MainController implements ActionListener {
 		pagar.addActionListener(this::pagar);
 		butonera.add(botonInventario);
 		botonInventario.addActionListener(this::changeView);
-		var d = tableDrawn.getPreferredSize();
-		d.height = (tableDrawn.length()+1)*ventana.getFont().getSize();
-		tableDrawn.setPreferredSize(d);
+		tableDrawn.setFont(ventana.getFont());
 		if (caja) {
 			tableDrawn.setTabla(venta());
 		} else {
@@ -184,8 +182,8 @@ public class MainController implements ActionListener {
 		var index = caja?0:1;
 		ventana.setTitle(Language.views[1-index]);
 		botonInventario.setLabel(Language.views[index]);
-		tableDrawn.repaint();
-		ventana.revalidate();
+		ventana.pack();
+		tableDrawn.revalidate();
 	}
 	
 	private Tabla venta() {

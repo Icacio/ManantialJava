@@ -27,8 +27,7 @@ import static com.example.manantial.controlador.MainController.tableController;
 import static com.example.manantial.controlador.MainController.ventana;
 
 public class SearchBox extends TextField implements ActionListener, TextListener, ItemListener, KeyListener
-	, FocusListener
-	, ComponentListener {
+	, FocusListener, ComponentListener {
 
 	private Window tooltip;
 	private Hashtable<String,String> table;
@@ -80,8 +79,9 @@ public class SearchBox extends TextField implements ActionListener, TextListener
 			if (coincidences < 1) {
 				disposeWindow();
 			} else {
+				tooltip.removeAll();
 				for (int i= 0; i < 3;i++) {
-					results[i] = new List(coincidences);
+					results[i] = new List(coincidences+1);
 					results[i].setFont(getFont());
 					results[i].addItemListener(this);
 				}

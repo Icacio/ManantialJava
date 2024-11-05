@@ -16,6 +16,14 @@ public class TableView extends Canvas {
 	}
 
 	@Override
+	public void validate() {
+		super.validate();
+		var d = getPreferredSize();
+		d.height = (length()+1)*getFont().getSize();
+		setPreferredSize(d);
+	}
+	
+	@Override
 	public void paint(Graphics g) {
 		var width = this.getBounds().width;
 		var heigh = getFont().getSize();
