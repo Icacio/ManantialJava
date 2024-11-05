@@ -173,6 +173,7 @@ public class MainController implements ActionListener {
 				return;
 			else {
 				pagar.setVisible(false);
+				tableDrawn.getTabla().save();
 				tableDrawn.setTabla(inventario);
 			}
 		} else {
@@ -188,7 +189,7 @@ public class MainController implements ActionListener {
 	}
 	
 	private Tabla venta() {
-		return new Tabla("venta");
+		return fc.read(working_dir+"venta","venta");
 	}
 	
 	private boolean validatePassword() {
