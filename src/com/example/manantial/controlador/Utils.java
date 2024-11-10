@@ -84,4 +84,12 @@ public final class Utils extends WindowAdapter implements ActionListener {
 	public static boolean[] arrayAdd(boolean[] array, boolean value) {
 		return (boolean[]) arrayAddP(array,value);
 	}
+	
+	public static boolean[] fillBool(boolean b, int leng) {
+		var bool = new boolean[leng];
+		for (int i = 0; i < leng; i++) {
+			bool[i] = b;
+		}
+		return bool;
+	}
 }

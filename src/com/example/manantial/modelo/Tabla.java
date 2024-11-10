@@ -31,15 +31,7 @@ public class Tabla {
 		precio = precio2;
 		cantidad = cantid2;
 		length = codigo.length;
-		changed = fillBool(false,length);
-	}
-	
-	protected boolean[] fillBool(boolean b, int leng) {
-		var bool = new boolean[leng];
-		for (int i = 0; i < leng; i++) {
-			bool[i] = b;
-		}
-		return bool;
+		changed = Utils.fillBool(false,length);
 	}
 
 	public long getBarcode(int y) {

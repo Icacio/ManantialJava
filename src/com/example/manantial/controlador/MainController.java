@@ -8,6 +8,7 @@ import java.awt.Panel;
 import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -188,6 +189,7 @@ public class MainController implements ActionListener {
 	
 	private Tabla venta() {
 		var venta = fc.read(working_dir+"venta","venta");
+		new File(working_dir+"venta").delete();
 		var suma = 0;
 		for (int i = 0; i < venta.length();i++)
 			suma += (venta.getCantidad(i)*venta.getPrecio(i));
