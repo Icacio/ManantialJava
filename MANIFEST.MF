@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: com.example.manantial.controlador.MainController
+Class-Path: Derby/derby.jar Derby/derbyshared.jar lang.jar
+Created-By: 11.0.22 (Oracle Corporation)
+

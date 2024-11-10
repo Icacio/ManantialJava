@@ -2,7 +2,6 @@ package com.example.manantial.modelo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -14,7 +13,7 @@ import static com.example.manantial.vista.language.Language.passwordError;
 import static com.example.manantial.controlador.Utils.requestPassword;
 import static com.example.manantial.controlador.MainController.working_dir;
 
-public class Inventario extends Tabla {
+public class Inventario extends Entity {
 	public static final Inventario singleton = new Inventario();
 	private static final String userPlusPass = ";user=root;password=";
 	private String pass;
@@ -110,34 +109,6 @@ public class Inventario extends Tabla {
 			changed[i1] = false;
 		}
 	}
-
-	@Override
-	public void save() {
-		try (var con = getCon(userPlusPass+pass);var st = con.prepareStatement("INSERT INTO Inventario (codigo,nombre,precio,cantidad) VALUES (?,?,?,?)")) {
-			for (int i = 0; i < length;i++) {
-				if (!changed[i]) continue;
-				st.setLong(1,codigo[i]);
-				st.setString(2,nombre[i]);
-				st.setInt(3,precio[i]);
-				st.setInt(4,cantidad[i]);
-				try {
-					st.executeUpdate();
-				} catch (SQLException e) {
-					if (!e.getSQLState().equals("23505"))
-						throw e;
-					update(con.prepareStatement("UPDATE Inventario SET cantidad = ? WHERE codigo = ?"),cantidad[i],codigo[i]);
-				}
-			}
-		} catch (SQLException e) {
-			abort(e);
-		}
-	}
-	
-	private void update(PreparedStatement st, int amt, long code) throws SQLException {
-		st.setLong(2,code);
-		st.setInt(1,amt);
-		st.executeUpdate();
-	}
 	
 	private void createTable(Statement st,String pass) throws SQLException {
 		st.executeUpdate("CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.connection.requireAuthentication', 'true')");
@@ -153,8 +124,14 @@ public class Inventario extends Tabla {
 		this.pass = pass;
 	}
 
-	public static void abort(SQLException e) {
+	@Override
+	protected void abort(SQLException e) {
 		System.out.println(e.getSQLState());
 		MainController.abort(e);
+	}
+
+	@Override
+	protected Connection getCon() throws SQLException {
+		return getCon(userPlusPass+pass);
 	}
 }
