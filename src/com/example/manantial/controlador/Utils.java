@@ -10,7 +10,7 @@ import java.lang.reflect.Array;
 
 import static com.example.manantial.controlador.MainController.ventana;
 
-import com.example.manantial.vista.Language;
+import com.example.manantial.vista.language.Language;
 import com.example.manantial.vista.MyDialog;
 import com.example.manantial.vista.PasswordGetter;
 

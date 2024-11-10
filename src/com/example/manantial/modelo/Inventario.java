@@ -10,7 +10,7 @@ import com.example.manantial.controlador.MainController;
 import com.example.manantial.vista.MyDialog;
 import com.example.manantial.vista.PasswordGetter;
 
-import static com.example.manantial.vista.Language.passwordError;
+import static com.example.manantial.vista.language.Language.passwordError;
 import static com.example.manantial.controlador.Utils.requestPassword;
 import static com.example.manantial.controlador.MainController.working_dir;
 

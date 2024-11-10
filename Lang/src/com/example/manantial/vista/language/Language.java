@@ -1,4 +1,4 @@
-package com.example.manantial.vista;
+package com.example.manantial.vista.language;
 
 public class Language {
 	public static final String passwordError = "La contraseña no coincide";

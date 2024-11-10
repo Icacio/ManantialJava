@@ -12,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import com.example.manantial.vista.language.Language;
+
 import static com.example.manantial.controlador.MainController.ventana;
 
 public class PasswordGetter extends Dialog implements ActionListener, WindowListener {

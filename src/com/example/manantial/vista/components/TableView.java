@@ -1,7 +1,7 @@
 package com.example.manantial.vista.components;
 
 import com.example.manantial.modelo.Tabla;
-import com.example.manantial.vista.Language;
+import com.example.manantial.vista.language.Language;
 
 import java.awt.Canvas;
 import java.awt.Graphics;

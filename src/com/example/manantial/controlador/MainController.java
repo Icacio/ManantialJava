@@ -15,7 +15,7 @@ import java.time.LocalDate;
 
 import com.example.manantial.modelo.Inventario;
 import com.example.manantial.modelo.Tabla;
-import com.example.manantial.vista.Language;
+import com.example.manantial.vista.language.Language;
 import com.example.manantial.vista.MyDialog;
 import com.example.manantial.vista.PasswordGetter;
 import com.example.manantial.vista.components.TableView;
